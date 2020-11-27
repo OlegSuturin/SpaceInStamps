@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">SpaceInStamps</string>
+    <string-array name="themes_array_string">
+        <item>Космос</item>
+        <item>Флора</item>
+        <item>Фауна</item>
+        <item>Спорт</item>
+        <item>Олимпиада</item>
+        <item>Новый год</item>
+        <item>Искусство</item>
+        <item>Архитектура</item>
+        <item>История</item>
+        <item>Война</item>
+        <item>Символы, ордена</item>
+        <item>Автомобили</item>
+        <item>Авиация</item>
+        <item>Корабли, флот</item>
+    </string-array>
 </resources>
