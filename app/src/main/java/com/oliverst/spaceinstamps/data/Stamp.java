@@ -17,7 +17,7 @@ public class Stamp{
 
     private String photoPath;
     private String bigPhotoPath;
-    private String resourceUrl;
+    private String detailUrl;
     private boolean flag;
 
     public Stamp(int idStamp, String theme, String name, String quantity) {
@@ -25,6 +25,7 @@ public class Stamp{
         this.theme = theme;
         this.name = name;
         this.quantity = quantity;
+        this.flag = false;
     }
 
     public int getId() {
@@ -87,8 +88,8 @@ public class Stamp{
         return bigPhotoPath;
     }
 
-    public String getResourceUrl() {
-        return resourceUrl;
+    public String getDetailUrl() {
+        return detailUrl;
     }
 
     public boolean isFlag() {

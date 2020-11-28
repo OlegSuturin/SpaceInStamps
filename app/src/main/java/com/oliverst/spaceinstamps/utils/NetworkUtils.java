@@ -1,14 +1,8 @@
 package com.oliverst.spaceinstamps.utils;
 
 
-import android.app.Application;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.oliverst.spaceinstamps.MainActivity;
-import com.oliverst.spaceinstamps.data.Stamp;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,8 +19,9 @@ import java.util.regex.Pattern;
 
 public class NetworkUtils {
 
-    private static String baseUrl = "http://www.philately.ru/cgi-bin/sql/search2.cgi?&action=search&tag=%s&page=%s";
-                                //  http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=%%C0%E2%E8%E0&cat_name=&page=2&lang=&keyword=
+    private static final String baseUrl = "http://www.philately.ru";
+    private static final String searshBaseUrl = "http://www.philately.ru/cgi-bin/sql/search2.cgi?&action=search&tag=%s&page=%s";
+    //  http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=%%C0%E2%E8%E0&cat_name=&page=2&lang=&keyword=
 
     public static final int COSMOS = 0;         //Космос
     public static final int FLORA = 1;          //Флора
@@ -58,47 +53,139 @@ public class NetworkUtils {
     public static final String THEME_AVIATION = "%C0%E2%E8%E0";
     public static final String THEME_BOATS = "%CA%EE%F0%E0%E1%EB%E8";
 
-    private static int recordsNumber;
-
-    public static int getRecordsNumber() {
-        return recordsNumber;
-    }
-
 
 //МЕТОД ПАРСЕР СТРАНИЦЫ РЕЗУЛЬТАТА ПОИСКА
 
-    public static void parserRecordsNumber(String data) {
+    public static int parserRecordsNumber(String data) {
         Pattern pattern = Pattern.compile("<br>Найдено <b>(.*?)</b> записей<br>");
         Matcher matcher = pattern.matcher(data);
         String result = "";
         while (matcher.find()) {
             result = matcher.group(1);
         }
-        recordsNumber = Integer.parseInt(result);
+        return Integer.parseInt(result);
     }
 
     public static ArrayList<String> parserTitlesStamp(String data) {
+        //буферные строки
         ArrayList<String> stringsBuf = new ArrayList<>();
-
         Pattern pattern = Pattern.compile("<tr><td align=center><a href=\"(.*?)</td></tr>");
         Matcher matcher = pattern.matcher(data);
         while (matcher.find()) {
-            String line = matcher.group(1);
-            // Log.i("!@#", line);
+            String line = matcher.group(0);
             stringsBuf.add(line);
         }
 
+        String idStamp = "";
         Pattern patternId = Pattern.compile("&id=(.*?)\">");
         Matcher matcherId;
-        String id;
+
+        String releaseYear = "";
+        String stringPatternRY;
+        Pattern patternReleaseYear;
+        Matcher matcherReleaseYear;
+
+        String catalogNumberITC = "";
+        String stringPatternITC = "</a></td><td>(.*?)</td><td>";
+        Pattern patternNumberITC = Pattern.compile(stringPatternITC);
+        Matcher matcherNumberITC;
+
+        String catalogNumberSK = "";
+        String stringPatternSK;
+        Pattern patternNumberSK;
+        Matcher matcherNumberSK;
+
+        String catalogNumberMich = "";
+        String stringPatternMich;
+        Pattern patternNumberMich;
+        Matcher matcherNumberMich;
+
+        String name = "";
+        String stringPatternName;
+        Pattern patternName;
+        Matcher matcherName;
+        String bufName = "";
+
+        String quantity = "";
+        String stringPatternQuantity = "</a></td><td align=center>(.*?)</td>";
+        Pattern patternQuantity = Pattern.compile(stringPatternQuantity);
+        Matcher matcherQuantity;
+
+        String price = "";
+        String stringPatternPrice = "</td>\t<td>(.*?)</td></tr>";
+        Pattern patternPrice = Pattern.compile(stringPatternPrice);
+        Matcher matcherPrice;
+
+        String detailUrl = "";
+        String stringPatternUrl;
+        Pattern patternUrl;
+        Matcher matcherUrl;
 
         for (String buf : stringsBuf) {
             matcherId = patternId.matcher(buf);
             if (matcherId.find()) {
-                id = matcherId.group(1);
-                Log.i("!@#", "" + id);
+                idStamp = matcherId.group(1);
             }
 
+            stringPatternRY = String.format("id=%s\">(.*?)</a></td><td>", idStamp);
+            patternReleaseYear = Pattern.compile(stringPatternRY);
+            matcherReleaseYear = patternReleaseYear.matcher(buf);
+            if (matcherReleaseYear.find()) {
+                releaseYear = matcherReleaseYear.group(1);
+            }
+
+            matcherNumberITC = patternNumberITC.matcher(buf);
+            if (matcherNumberITC.find()) {
+                catalogNumberITC = matcherNumberITC.group(1);
+            }
+
+            stringPatternSK = String.format("%s</td><td>(.*?)</td><td>", catalogNumberITC);
+            patternNumberSK = Pattern.compile(stringPatternSK);
+            matcherNumberSK = patternNumberSK.matcher(buf);
+            if (matcherNumberSK.find()) {
+                catalogNumberSK = matcherNumberSK.group(1);
+            }
+
+            stringPatternMich = String.format("%s</td><td>(.*?)</td><td align", catalogNumberSK);
+            patternNumberMich = Pattern.compile(stringPatternMich);
+            matcherNumberMich = patternNumberMich.matcher(buf);
+            if (matcherNumberMich.find()) {
+                catalogNumberMich = matcherNumberMich.group(1);
+            }
+
+            stringPatternName = String.format("id=%s\">(.*?)</td><td align=center>", idStamp);
+            patternName = Pattern.compile(stringPatternName);
+            matcherName = patternName.matcher(buf);
+            if (matcherName.find()) {
+                bufName = matcherName.group(1);
+            }
+
+            stringPatternName = String.format("id=%s\">(.*?)</a>", idStamp);
+            patternName = Pattern.compile(stringPatternName);
+            matcherName = patternName.matcher(bufName);
+            if (matcherName.find()) {
+                name = matcherName.group(1);
+            }
+
+            matcherQuantity = patternQuantity.matcher(buf);
+            if (matcherQuantity.find()) {
+                quantity = matcherQuantity.group(1);
+            }
+
+            matcherPrice = patternPrice.matcher(buf);
+            if (matcherPrice.find()) {
+                price = matcherPrice.group(1);
+            }
+
+            stringPatternUrl = String.format("/cgi-bin/(.*?)id=%s", idStamp);
+            patternName = Pattern.compile(stringPatternUrl);
+            matcherUrl = patternName.matcher(buf);
+            if (matcherUrl.find()) {
+                detailUrl = baseUrl + matcherUrl.group(0);
+            }
+
+            Log.i("!@#", "id:" + idStamp + " год:" + releaseYear + " ITC:" + catalogNumberITC + " SK:" + catalogNumberSK + " Mich:" + catalogNumberMich
+                    + " Название выпуска:" + name + " Кол-во:" + quantity + " Цена: " + price + " Url:" + detailUrl);
         }
         return stringsBuf;
     }
@@ -111,46 +198,46 @@ public class NetworkUtils {
 
         switch (themeNumber) {
             case COSMOS:
-                urlString = String.format(baseUrl, THEME_COSMOS, page);
+                urlString = String.format(searshBaseUrl, THEME_COSMOS, page);
                 break;
             case FLORA:
-                urlString = String.format(baseUrl, THEME_FLORA, page);
+                urlString = String.format(searshBaseUrl, THEME_FLORA, page);
                 break;
             case FAUNA:
-                urlString = String.format(baseUrl, THEME_FAUNA, page);
+                urlString = String.format(searshBaseUrl, THEME_FAUNA, page);
                 break;
             case SPORT:
-                urlString = String.format(baseUrl, THEME_SPORT, page);
+                urlString = String.format(searshBaseUrl, THEME_SPORT, page);
                 break;
             case OLYMPIC:
-                urlString = String.format(baseUrl, THEME_OLYMPIC, page);
+                urlString = String.format(searshBaseUrl, THEME_OLYMPIC, page);
                 break;
             case NEW_YEAR:
-                urlString = String.format(baseUrl, THEME_NEW_YEAR, page);
+                urlString = String.format(searshBaseUrl, THEME_NEW_YEAR, page);
                 break;
             case ART:
-                urlString = String.format(baseUrl, THEME_ART, page);
+                urlString = String.format(searshBaseUrl, THEME_ART, page);
                 break;
             case ARCHITECTURE:
-                urlString = String.format(baseUrl, THEME_ARCHITECTURE, page);
+                urlString = String.format(searshBaseUrl, THEME_ARCHITECTURE, page);
                 break;
             case HISTORY:
-                urlString = String.format(baseUrl, THEME_HISTORY, page);
+                urlString = String.format(searshBaseUrl, THEME_HISTORY, page);
                 break;
             case WAR:
-                urlString = String.format(baseUrl, THEME_WAR, page);
+                urlString = String.format(searshBaseUrl, THEME_WAR, page);
                 break;
             case SYMBOLS:
-                urlString = String.format(baseUrl, THEME_SYMBOLS, page);
+                urlString = String.format(searshBaseUrl, THEME_SYMBOLS, page);
                 break;
             case AUTO:
-                urlString = String.format(baseUrl, THEME_AUTO, page);
+                urlString = String.format(searshBaseUrl, THEME_AUTO, page);
                 break;
             case AVIATION:
-                urlString = String.format(baseUrl, THEME_AVIATION, page);
+                urlString = String.format(searshBaseUrl, THEME_AVIATION, page);
                 break;
             case BOATS:
-                urlString = String.format(baseUrl, THEME_BOATS, page);
+                urlString = String.format(searshBaseUrl, THEME_BOATS, page);
                 break;
 
             default:

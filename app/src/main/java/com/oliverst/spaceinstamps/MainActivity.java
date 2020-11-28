@@ -30,24 +30,29 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 theme = (String) parent.getSelectedItem();
                 //Toast.makeText(MainActivity.this, theme + " " + position, Toast.LENGTH_SHORT).show();
-                Log.i("!@#", NetworkUtils.buildURL(position, 2).toString());
-                String data = NetworkUtils.getStampsFromNetwork(position, 2);
-                NetworkUtils.parserRecordsNumber(data);
-                Toast.makeText(MainActivity.this, "Всего выпусков: " + NetworkUtils.getRecordsNumber(), Toast.LENGTH_SHORT).show();
-                ArrayList<String> stringsBuf = NetworkUtils.parserTitlesStamp(data);
-
-
-
-
+//                Log.i("!@#", NetworkUtils.buildURL(position, 1).toString());
+//                String data = NetworkUtils.getStampsFromNetwork(position, 1);
+//                NetworkUtils.parserRecordsNumber(data);
+//                Toast.makeText(MainActivity.this, "Всего выпусков: " + NetworkUtils.getRecordsNumber(), Toast.LENGTH_SHORT).show();
+//                ArrayList<String> stringsBuf = NetworkUtils.parserTitlesStamp(data);
+                    downLoadData(1);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         };
 
         spinnerThemeSelect.setOnItemSelectedListener(onItemSelectedListener);
     }//end of onCreate
+
+    private void downLoadData(int page){
+        int position = spinnerThemeSelect.getSelectedItemPosition();
+        //Toast.makeText(MainActivity.this, theme + " " + position, Toast.LENGTH_SHORT).show();
+        Log.i("!@#", NetworkUtils.buildURL(position, 1).toString());
+        String data = NetworkUtils.getStampsFromNetwork(position, 1);
+        int recordsNumber = NetworkUtils.parserRecordsNumber(data);
+        Toast.makeText(MainActivity.this, "Всего найдено выпусков: " + recordsNumber, Toast.LENGTH_SHORT).show();
+        ArrayList<String> stringsBuf = NetworkUtils.parserTitlesStamp(data);
+    }
 
 }
