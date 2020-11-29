@@ -4,6 +4,8 @@ package com.oliverst.spaceinstamps.utils;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.oliverst.spaceinstamps.data.Stamp;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,8 +68,12 @@ public class NetworkUtils {
         return Integer.parseInt(result);
     }
 
-    public static ArrayList<String> parserTitlesStamp(String data) {
+    public static ArrayList<Stamp> parserTitlesStamp(String data) {
         //буферные строки
+        ArrayList<Stamp> stamps = new ArrayList<>();
+
+
+
         ArrayList<String> stringsBuf = new ArrayList<>();
         Pattern pattern = Pattern.compile("<tr><td align=center><a href=\"(.*?)</td></tr>");
         Matcher matcher = pattern.matcher(data);
@@ -184,10 +190,12 @@ public class NetworkUtils {
                 detailUrl = baseUrl + matcherUrl.group(0);
             }
 
-            Log.i("!@#", "id:" + idStamp + " год:" + releaseYear + " ITC:" + catalogNumberITC + " SK:" + catalogNumberSK + " Mich:" + catalogNumberMich
-                    + " Название выпуска:" + name + " Кол-во:" + quantity + " Цена: " + price + " Url:" + detailUrl);
+            if (!idStamp.isEmpty()) {
+                stamps.add( new Stamp(Integer.parseInt(idStamp), releaseYear,name,quantity,catalogNumberITC,catalogNumberSK,catalogNumberMich,price, detailUrl));
+            }
+
         }
-        return stringsBuf;
+        return stamps;
     }
 
 

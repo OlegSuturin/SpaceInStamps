@@ -9,11 +9,13 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.oliverst.spaceinstamps.data.Stamp;
 import com.oliverst.spaceinstamps.utils.NetworkUtils;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    ArrayList<Stamp> stamps = new ArrayList<>();
     private Spinner spinnerThemeSelect;
     private String theme;
 
@@ -52,7 +54,14 @@ public class MainActivity extends AppCompatActivity {
         String data = NetworkUtils.getStampsFromNetwork(position, 1);
         int recordsNumber = NetworkUtils.parserRecordsNumber(data);
         Toast.makeText(MainActivity.this, "Всего найдено выпусков: " + recordsNumber, Toast.LENGTH_SHORT).show();
-        ArrayList<String> stringsBuf = NetworkUtils.parserTitlesStamp(data);
+        stamps = NetworkUtils.parserTitlesStamp(data);
+
+        for(Stamp stamp: stamps){
+            Log.i("!@#", "id:" +stamp.getIdStamp()+ " год:" + stamp.getReleaseYear() + " ITC:" + stamp.getCatalogNumberITC() + " SK:" + stamp.getCatalogNumberSK() + " Mich:" + stamp.getCatalogNumberMich()
+                    + " Название выпуска:" + stamp.getName() + " Кол-во:" + stamp.getQuantity() + " Цена: " + stamp.getPrice() + " Url:" + stamp.getDetailUrl());
+        }
+
+
     }
 
 }
