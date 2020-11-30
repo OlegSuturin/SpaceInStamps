@@ -5,7 +5,7 @@ public class Stamp{
     int idStamp;   //*
     private String theme;
     private String country;
-    private String year;   //*
+    private int year;   //*
     private String dataRelease;
     private String name;           //*
     private String overview;
@@ -22,7 +22,7 @@ public class Stamp{
     private String detailUrl;           //*
     private boolean flag;
 
-    public Stamp(int idStamp, String year, String name, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String price, String detailUrl) {
+    public Stamp(int idStamp, int year, String name, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String price, String detailUrl) {
         this.idStamp = idStamp;
         this.year = year;
         this.name = name;
@@ -50,7 +50,7 @@ public class Stamp{
         return country;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 

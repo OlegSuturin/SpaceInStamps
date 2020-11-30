@@ -1,8 +1,14 @@
 package com.oliverst.spaceinstamps.utils;
 
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.loader.content.AsyncTaskLoader;
 
 import com.oliverst.spaceinstamps.data.Stamp;
 
@@ -71,7 +77,6 @@ public class NetworkUtils {
     public static ArrayList<Stamp> parserTitlesStamp(String data) {
         //буферные строки
         ArrayList<Stamp> stamps = new ArrayList<>();
-
 
 
         ArrayList<String> stringsBuf = new ArrayList<>();
@@ -191,7 +196,7 @@ public class NetworkUtils {
             }
 
             if (!idStamp.isEmpty()) {
-                stamps.add( new Stamp(Integer.parseInt(idStamp), year,name,quantity,catalogNumberITC,catalogNumberSK,catalogNumberMich,price, detailUrl));
+                stamps.add(new Stamp(Integer.parseInt(idStamp), Integer.parseInt(year), name, quantity, catalogNumberITC, catalogNumberSK, catalogNumberMich, price, detailUrl));
             }
 
         }
@@ -288,6 +293,74 @@ public class NetworkUtils {
                 HttpURLConnection urlConnection = null;
                 try {
                     urlConnection = (HttpURLConnection) urls[0].openConnection();
+                    InputStream in = urlConnection.getInputStream();
+
+                    InputStreamReader reader = new InputStreamReader(in, Charset.forName("windows-1251"));
+
+                    BufferedReader bufferedReader = new BufferedReader(reader);
+                    String line = bufferedReader.readLine();
+                    while (line != null) {
+                        resultDownload.append(line);
+                        line = bufferedReader.readLine();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (urlConnection != null)
+                        urlConnection.disconnect();
+                }
+            }
+            return resultDownload.toString();
+        }
+    }
+
+    //=================================================loader===============================
+    public static class DataLoader extends AsyncTaskLoader<String> {
+        private Bundle bundle;
+        private OnStartLoadingListener onStartLoadingListener;
+
+        public DataLoader(@NonNull Context context, Bundle bundle) {  //конструктор
+            super(context);
+            this.bundle = bundle;
+        }
+
+        public interface OnStartLoadingListener {    //слушатель на Старт загрузки данных
+            void onStartLoading();
+        }
+
+        public void setOnStartLoadingListener(OnStartLoadingListener onStartLoadingListener) {
+            this.onStartLoadingListener = onStartLoadingListener;
+        }
+
+        @Override
+        protected void onStartLoading() {
+            super.onStartLoading();
+            if (onStartLoadingListener != null) {
+               onStartLoadingListener.onStartLoading();
+            }
+            forceLoad();
+        }
+
+        @Nullable
+        @Override
+        public String loadInBackground() {
+            if (bundle == null) {
+                return null;
+            }
+            StringBuilder resultDownload = new StringBuilder();
+            String urlAsString = bundle.getString("url");
+            URL url = null;
+            try {
+                url = new URL(urlAsString);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            if (url == null) {
+                return null;
+            } else {
+                HttpURLConnection urlConnection = null;
+                try {
+                    urlConnection = (HttpURLConnection) url.openConnection();
                     InputStream in = urlConnection.getInputStream();
 
                     InputStreamReader reader = new InputStreamReader(in, Charset.forName("windows-1251"));

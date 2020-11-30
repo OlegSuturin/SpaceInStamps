@@ -1,5 +1,6 @@
 package com.oliverst.spaceinstamps.adapters;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,9 @@ import java.util.ArrayList;
 
 public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHolder> {
     private ArrayList<Stamp> stamps;
+    private OnStampClickListener onStampClickListener;
+    private OnReachEndListener onReachEndListener;
+
 
     public StampAdapter() {
         stamps = new ArrayList<>();
@@ -30,8 +34,31 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHo
         notifyDataSetChanged();
     }
 
+    public void clearStamps() {
+        this.stamps.clear();
+        notifyDataSetChanged();
+    }
+
     public ArrayList<Stamp> getStamps() {
         return stamps;
+    }
+
+    //----Слушатель на клик
+    public interface OnStampClickListener {
+        void onStampClick(int position);
+    }
+
+    public void setOnStampClickListener(OnStampClickListener onStampClickListener) {
+        this.onStampClickListener = onStampClickListener;
+    }
+
+    //-----Слушатель на достижение конца списка
+    public interface OnReachEndListener {
+        void onReachEnd();
+    }
+
+    public void setOnReachEndListener(OnReachEndListener onReachEndListener) {
+        this.onReachEndListener = onReachEndListener;
     }
 
     @NonNull
@@ -41,12 +68,18 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHo
         return new StampsViewHolder(view);
     }
 
+
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull StampsViewHolder holder, int position) {
-        Stamp stamp = stamps.get(position);
-        holder.textViewReleaseYear.setText(stamp.getYear());
+        if (onReachEndListener != null && position == stamps.size()-10 && stamps.size() >= 100){
+                onReachEndListener.onReachEnd();
+        }
+
+            Stamp stamp = stamps.get(position);
+        holder.textViewReleaseYear.setText(Integer.toString(stamp.getYear()));
         holder.textViewName.setText(stamp.getName());
-            String catalogNumbers = String.format("ИТС:%s СК:%s Михель:%s", stamp.getCatalogNumberITC(), stamp.getCatalogNumberSK(), stamp.getCatalogNumberMich());
+        String catalogNumbers = String.format("ИТС:%s СК:%s Михель:%s", stamp.getCatalogNumberITC(), stamp.getCatalogNumberSK(), stamp.getCatalogNumberMich());
         holder.textViewCatalogNumbers.setText(catalogNumbers);
         holder.textViewQuantity.setText(stamp.getQuantity());
     }
@@ -68,6 +101,15 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHo
             textViewName = itemView.findViewById(R.id.textViewName);
             textViewCatalogNumbers = itemView.findViewById(R.id.textViewCatalogNumbers);
             textViewQuantity = itemView.findViewById(R.id.textViewQuantity);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onStampClickListener != null) {
+                        onStampClickListener.onStampClick(getAdapterPosition());
+                    }
+                }
+            });
 
         }
     }
