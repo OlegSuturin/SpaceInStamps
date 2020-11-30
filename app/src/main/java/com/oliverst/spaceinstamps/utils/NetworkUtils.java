@@ -86,10 +86,10 @@ public class NetworkUtils {
         Pattern patternId = Pattern.compile("&id=(.*?)\">");
         Matcher matcherId;
 
-        String releaseYear = "";
-        String stringPatternRY;
-        Pattern patternReleaseYear;
-        Matcher matcherReleaseYear;
+        String year = "";
+        String stringPatternY;
+        Pattern patternYear;
+        Matcher matcherYear;
 
         String catalogNumberITC = "";
         String stringPatternITC = "</a></td><td>(.*?)</td><td>";
@@ -133,11 +133,11 @@ public class NetworkUtils {
                 idStamp = matcherId.group(1);
             }
 
-            stringPatternRY = String.format("id=%s\">(.*?)</a></td><td>", idStamp);
-            patternReleaseYear = Pattern.compile(stringPatternRY);
-            matcherReleaseYear = patternReleaseYear.matcher(buf);
-            if (matcherReleaseYear.find()) {
-                releaseYear = matcherReleaseYear.group(1);
+            stringPatternY = String.format("id=%s\">(.*?)</a></td><td>", idStamp);
+            patternYear = Pattern.compile(stringPatternY);
+            matcherYear = patternYear.matcher(buf);
+            if (matcherYear.find()) {
+                year = matcherYear.group(1);
             }
 
             matcherNumberITC = patternNumberITC.matcher(buf);
@@ -191,7 +191,7 @@ public class NetworkUtils {
             }
 
             if (!idStamp.isEmpty()) {
-                stamps.add( new Stamp(Integer.parseInt(idStamp), releaseYear,name,quantity,catalogNumberITC,catalogNumberSK,catalogNumberMich,price, detailUrl));
+                stamps.add( new Stamp(Integer.parseInt(idStamp), year,name,quantity,catalogNumberITC,catalogNumberSK,catalogNumberMich,price, detailUrl));
             }
 
         }

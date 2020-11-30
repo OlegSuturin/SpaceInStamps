@@ -1,0 +1,75 @@
+package com.oliverst.spaceinstamps.adapters;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.oliverst.spaceinstamps.R;
+import com.oliverst.spaceinstamps.data.Stamp;
+
+import java.util.ArrayList;
+
+public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHolder> {
+    private ArrayList<Stamp> stamps;
+
+    public StampAdapter() {
+        stamps = new ArrayList<>();
+    }
+
+    public void setStamps(ArrayList<Stamp> stamps) {
+        this.stamps = stamps;
+        notifyDataSetChanged();
+    }
+
+    public void addStamps(ArrayList<Stamp> stamps) {
+        this.stamps.addAll(stamps);
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<Stamp> getStamps() {
+        return stamps;
+    }
+
+    @NonNull
+    @Override
+    public StampsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.stamp_item, parent, false);
+        return new StampsViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull StampsViewHolder holder, int position) {
+        Stamp stamp = stamps.get(position);
+        holder.textViewReleaseYear.setText(stamp.getYear());
+        holder.textViewName.setText(stamp.getName());
+            String catalogNumbers = String.format("ИТС:%s СК:%s Михель:%s", stamp.getCatalogNumberITC(), stamp.getCatalogNumberSK(), stamp.getCatalogNumberMich());
+        holder.textViewCatalogNumbers.setText(catalogNumbers);
+        holder.textViewQuantity.setText(stamp.getQuantity());
+    }
+
+    @Override
+    public int getItemCount() {
+        return stamps.size();
+    }
+
+    class StampsViewHolder extends RecyclerView.ViewHolder {
+        private TextView textViewReleaseYear;
+        private TextView textViewName;
+        private TextView textViewCatalogNumbers;
+        private TextView textViewQuantity;
+
+        public StampsViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textViewReleaseYear = itemView.findViewById(R.id.textViewYear);
+            textViewName = itemView.findViewById(R.id.textViewName);
+            textViewCatalogNumbers = itemView.findViewById(R.id.textViewCatalogNumbers);
+            textViewQuantity = itemView.findViewById(R.id.textViewQuantity);
+
+        }
+    }
+
+}

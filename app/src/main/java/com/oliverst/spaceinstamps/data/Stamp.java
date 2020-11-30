@@ -5,7 +5,8 @@ public class Stamp{
     int idStamp;   //*
     private String theme;
     private String country;
-    private String releaseYear;   //*
+    private String year;   //*
+    private String dataRelease;
     private String name;           //*
     private String overview;
     private String quantity;        //*
@@ -13,6 +14,7 @@ public class Stamp{
     private String catalogNumberSK;     //*
     private String catalogNumberMich;   //*
     private String catalogNumberScott;
+    private String catalogNumberCgib;
     private String price;               //*
 
     private String photoPath;
@@ -20,9 +22,9 @@ public class Stamp{
     private String detailUrl;           //*
     private boolean flag;
 
-    public Stamp(int idStamp, String releaseYear, String name, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String price, String detailUrl) {
+    public Stamp(int idStamp, String year, String name, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String price, String detailUrl) {
         this.idStamp = idStamp;
-        this.releaseYear = releaseYear;
+        this.year = year;
         this.name = name;
         this.quantity = quantity;
         this.catalogNumberITC = catalogNumberITC;
@@ -48,8 +50,12 @@ public class Stamp{
         return country;
     }
 
-    public String getReleaseYear() {
-        return releaseYear;
+    public String getYear() {
+        return year;
+    }
+
+    public String getDataRelease() {
+        return dataRelease;
     }
 
     public String getName() {
@@ -78,6 +84,10 @@ public class Stamp{
 
     public String getCatalogNumberScott() {
         return catalogNumberScott;
+    }
+
+    public String getCatalogNumberCgib() {
+        return catalogNumberCgib;
     }
 
     public String getPrice() {
