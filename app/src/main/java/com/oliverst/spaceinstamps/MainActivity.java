@@ -3,11 +3,15 @@ package com.oliverst.spaceinstamps;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,11 +21,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.oliverst.spaceinstamps.adapters.StampAdapter;
+import com.oliverst.spaceinstamps.data.MainViewModel;
 import com.oliverst.spaceinstamps.data.Stamp;
 import com.oliverst.spaceinstamps.utils.NetworkUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
     // private ArrayList<Stamp> stamps;
@@ -38,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private LoaderManager loaderManager;      //  - менеджер загрузок
     private ProgressBar progressBarLoading;
 
+    private MainViewModel viewModel;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         recyclerViewTitle.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewTitle.setAdapter(adapter);
 
+        viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(MainViewModel.class);
         loaderManager = LoaderManager.getInstance(this);
         //слушатель выбора на спинере
         AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -73,7 +83,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter.setOnStampClickListener(new StampAdapter.OnStampClickListener() {
             @Override
             public void onStampClick(int position) {
-                Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+                Stamp stamp = adapter.getStamps().get(position);
+                Intent intent = new Intent(MainActivity.this, DetailStamp.class);
+                intent.putExtra("id", stamp.getId());
+                startActivity(intent);
             }
         });
         //слушатель достижения конца списка
@@ -88,7 +102,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
             }
         });
-
+        LiveData<List<Stamp>> stampsFromLiveData = viewModel.getStampsLiveData();
+        stampsFromLiveData.observe(this, new Observer<List<Stamp>>() {
+            @Override
+            public void onChanged(List<Stamp> stamps) {
+//                if (pageG == 1) {
+                   adapter.setStamps(stamps);    // если отсутствует интернет устанавливаем на адаптер данные из БД
+//                    //ЛОГИКА ПРИЛОЖЕНИЯ
+//                }
+            }
+        });
 
     }//end of onCreate
 
@@ -123,13 +146,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Toast.makeText(this, "данные не загружены", Toast.LENGTH_SHORT).show();
         }
         if (pageG == 1) {
-            adapter.clearStamps();
+          //  adapter.clearStamps();
+            viewModel.deleteAllStamps();
             int recordsNumber = NetworkUtils.parserRecordsNumber(data);
             Toast.makeText(MainActivity.this, "Всего найдено: " + recordsNumber, Toast.LENGTH_SHORT).show();
         }
         ArrayList<Stamp> stamps = NetworkUtils.parserTitlesStamp(data);
         if (stamps != null && !stamps.isEmpty()) {
-            adapter.addStamps(stamps);
+          //  adapter.addStamps(stamps);
+            for(Stamp stamp: stamps){
+                viewModel.insertStamp(stamp);
+            }
             pageG++;
         }
         isLoading = false;  //загрузка закончилась

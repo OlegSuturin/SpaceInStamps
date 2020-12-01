@@ -62,7 +62,7 @@ public class NetworkUtils {
     public static final String THEME_BOATS = "%CA%EE%F0%E0%E1%EB%E8";
 
 
-//МЕТОД ПАРСЕР СТРАНИЦЫ РЕЗУЛЬТАТА ПОИСКА
+//МЕТОДЫ ПАРСЕРЫ СТРАНИЦЫ РЕЗУЛЬТАТА ПОИСКА
 
     public static int parserRecordsNumber(String data) {
         Pattern pattern = Pattern.compile("<br>Найдено <b>(.*?)</b> записей<br>");
@@ -265,7 +265,7 @@ public class NetworkUtils {
         return urlResult;
     }
 
-    //-------------------------------------------------------------------------------------------------
+    //----------------------------------------метод и класс заменены лоадером------------------------------------------------
     public static String getStampsFromNetwork(int themeNumber, int page) {
         String result = null;
         URL url = buildURL(themeNumber, page);

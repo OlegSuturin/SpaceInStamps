@@ -13,9 +13,10 @@ import com.oliverst.spaceinstamps.R;
 import com.oliverst.spaceinstamps.data.Stamp;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHolder> {
-    private ArrayList<Stamp> stamps;
+    private List<Stamp> stamps;
     private OnStampClickListener onStampClickListener;
     private OnReachEndListener onReachEndListener;
 
@@ -24,12 +25,12 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHo
         stamps = new ArrayList<>();
     }
 
-    public void setStamps(ArrayList<Stamp> stamps) {
+    public void setStamps(List<Stamp> stamps) {
         this.stamps = stamps;
         notifyDataSetChanged();
     }
 
-    public void addStamps(ArrayList<Stamp> stamps) {
+    public void addStamps(List<Stamp> stamps) {
         this.stamps.addAll(stamps);
         notifyDataSetChanged();
     }
@@ -39,7 +40,7 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHo
         notifyDataSetChanged();
     }
 
-    public ArrayList<Stamp> getStamps() {
+    public List<Stamp> getStamps() {
         return stamps;
     }
 

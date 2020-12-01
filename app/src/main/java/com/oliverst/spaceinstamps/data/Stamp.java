@@ -1,7 +1,14 @@
 package com.oliverst.spaceinstamps.data;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName ="stamps")
 public class Stamp{
+    @PrimaryKey(autoGenerate = true)
     int id;
+
     int idStamp;   //*
     private String theme;
     private String country;
@@ -22,6 +29,29 @@ public class Stamp{
     private String detailUrl;           //*
     private boolean flag;
 
+    public Stamp(int id, int idStamp, String theme, String country, int year, String dataRelease, String name, String overview, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String catalogNumberScott, String catalogNumberCgib, String price, String photoPath, String bigPhotoPath, String detailUrl, boolean flag) {
+        this.id = id;
+        this.idStamp = idStamp;
+        this.theme = theme;
+        this.country = country;
+        this.year = year;
+        this.dataRelease = dataRelease;
+        this.name = name;
+        this.overview = overview;
+        this.quantity = quantity;
+        this.catalogNumberITC = catalogNumberITC;
+        this.catalogNumberSK = catalogNumberSK;
+        this.catalogNumberMich = catalogNumberMich;
+        this.catalogNumberScott = catalogNumberScott;
+        this.catalogNumberCgib = catalogNumberCgib;
+        this.price = price;
+        this.photoPath = photoPath;
+        this.bigPhotoPath = bigPhotoPath;
+        this.detailUrl = detailUrl;
+        this.flag = flag;
+    }
+
+    @Ignore
     public Stamp(int idStamp, int year, String name, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String price, String detailUrl) {
         this.idStamp = idStamp;
         this.year = year;
@@ -32,6 +62,82 @@ public class Stamp{
         this.catalogNumberMich = catalogNumberMich;
         this.price = price;
         this.detailUrl = detailUrl;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setIdStamp(int idStamp) {
+        this.idStamp = idStamp;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public void setDataRelease(String dataRelease) {
+        this.dataRelease = dataRelease;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setCatalogNumberITC(String catalogNumberITC) {
+        this.catalogNumberITC = catalogNumberITC;
+    }
+
+    public void setCatalogNumberSK(String catalogNumberSK) {
+        this.catalogNumberSK = catalogNumberSK;
+    }
+
+    public void setCatalogNumberMich(String catalogNumberMich) {
+        this.catalogNumberMich = catalogNumberMich;
+    }
+
+    public void setCatalogNumberScott(String catalogNumberScott) {
+        this.catalogNumberScott = catalogNumberScott;
+    }
+
+    public void setCatalogNumberCgib(String catalogNumberCgib) {
+        this.catalogNumberCgib = catalogNumberCgib;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
+    }
+
+    public void setBigPhotoPath(String bigPhotoPath) {
+        this.bigPhotoPath = bigPhotoPath;
+    }
+
+    public void setDetailUrl(String detailUrl) {
+        this.detailUrl = detailUrl;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
     }
 
     public int getId() {
