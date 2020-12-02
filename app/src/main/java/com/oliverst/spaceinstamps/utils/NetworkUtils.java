@@ -78,7 +78,6 @@ public class NetworkUtils {
         //буферные строки
         ArrayList<Stamp> stamps = new ArrayList<>();
 
-
         ArrayList<String> stringsBuf = new ArrayList<>();
         Pattern pattern = Pattern.compile("<tr><td align=center><a href=\"(.*?)</td></tr>");
         Matcher matcher = pattern.matcher(data);
@@ -196,15 +195,63 @@ public class NetworkUtils {
             }
 
             if (!idStamp.isEmpty()) {
-                stamps.add(new Stamp(Integer.parseInt(idStamp), Integer.parseInt(year), name, quantity, catalogNumberITC, catalogNumberSK, catalogNumberMich, price, detailUrl));
+                Stamp stamp = new Stamp(Integer.parseInt(idStamp), Integer.parseInt(year), name, quantity, catalogNumberITC, catalogNumberSK, catalogNumberMich, price, detailUrl);
+                //stamp.setCountry("СССР");
+                stamps.add(stamp);
             }
 
         }
         return stamps;
     }
 
+    public static Stamp parserDetailStamp(String data, String year) {
+        Stamp detailStamp = null;
 
-    //МЕТОД, ФОРМИРУЕС СТРОКУ ЗАПРОСА URL
+        String buf = "";
+        String stringPatternBuf = "Страна:</FONT>(.*?)</td></tr></table></td></tr></table><br></center></TD>";
+        Pattern patternBuf = Pattern.compile(stringPatternBuf);
+        Matcher matcherBuf = patternBuf.matcher(data);
+        if (matcherBuf.find()) {
+            buf = matcherBuf.group(0);
+        }
+
+        String country = "";
+        String stringPatternCountry = "Color=#003399>(.*?)</TD>";
+        Pattern patternCountry = Pattern.compile(stringPatternCountry);
+        Matcher matcherCountry = patternCountry.matcher(buf);
+        if (matcherCountry.find()) {
+            country = matcherCountry.group(1);
+        }
+
+        String dateRelease = "";
+        String stringPatternRelease = String.format("%s&nbsp;&nbsp;<Font face=\"Verdana, Arial, Helvetica\" Size=2 Color=#003399>(.*?)</TD>", year);
+        Pattern patternRelease = Pattern.compile(stringPatternRelease);
+        Matcher matcherRelease = patternRelease.matcher(buf);
+        if (matcherRelease.find()) {
+            dateRelease = year + "  " + matcherRelease.group(1);
+        }
+
+        String overview = "";
+        String stringOverview = "Описание:</FONT>&nbsp;&nbsp;<Font face=\"Verdana, Arial, Helvetica\" Size=2 Color=#003399>(.*?)</TD></TR><TR>";
+        Pattern patternOverview = Pattern.compile(stringOverview);
+        Matcher matcherOverview = patternOverview.matcher(buf);
+        if (matcherOverview.find()) {
+            overview = matcherOverview.group(1);
+        }
+
+        String specifications = "";
+        String stringSpecifications = ">Тираж, тыс.:</font>(.*?)</TD></TR><TR><TD";
+        Pattern patternSpecification = Pattern.compile(stringSpecifications);
+        Matcher matcherSpecifications = patternSpecification.matcher(buf);
+        if (matcherSpecifications.find()) {
+            specifications = matcherSpecifications.group(1);
+        }
+
+        return new Stamp(country, dateRelease, overview, specifications, "");
+
+    }
+
+    //МЕТОД, ФОРМИРУЕТ СТРОКУ ЗАПРОСА URL
     public static URL buildURL(int themeNumber, int page) {
         String urlString;
         URL urlResult = null;
@@ -281,6 +328,26 @@ public class NetworkUtils {
         return result;
     }
 
+    public static String getDetailFromNetwork(String urlAsString) {
+        String result = null;
+        URL url = null;
+        try {
+            url = new URL(urlAsString);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        //здесь запускаем загрузку в другом программном потоке
+        DataLoadTask task = new DataLoadTask();
+        try {
+            result = task.execute(url).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     private static class DataLoadTask extends AsyncTask<URL, Void, String> {
 
         @Override
@@ -336,7 +403,7 @@ public class NetworkUtils {
         protected void onStartLoading() {
             super.onStartLoading();
             if (onStartLoadingListener != null) {
-               onStartLoadingListener.onStartLoading();
+                onStartLoadingListener.onStartLoading();
             }
             forceLoad();
         }

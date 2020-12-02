@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:paddingBottom="16dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4" />
 
     <TextView
         android:id="@+id/textViewLabelCountry"
+        style="@style/LabelStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin ="8dp"
+        android:layout_margin="8dp"
         android:text="Страна:"
-        style="@style/LabelStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,61 +34,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewCountryInfo" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineCenter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.4" />
 
     <TextView
         android:id="@+id/textViewCountryInfo"
+        style="@style/TextDataStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="TextView"
-        android:textColor="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textViewLabelYear"
+        style="@style/LabelStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="Год:"
-        style="@style/LabelStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewCountryInfo" />
+
     <View
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/white"
         android:layout_margin="4dp"
-        app:layout_constraintStart_toStartOf ="parent"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewYearInfo"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewYearInfo" />
 
     <TextView
         android:id="@+id/textViewYearInfo"
+        style="@style/TextDataStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="TextView"
-        android:textColor="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
         app:layout_constraintTop_toBottomOf="@+id/textViewCountryInfo" />
 
     <TextView
         android:id="@+id/textViewLabelName"
+        style="@style/LabelStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="Название выпуска:"
-        style="@style/LabelStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewYearInfo" />
 
@@ -98,22 +99,22 @@
 
     <TextView
         android:id="@+id/textViewNameInfo"
+        style="@style/TextDataStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="TextView"
-        android:textColor="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
         app:layout_constraintTop_toBottomOf="@+id/textViewYearInfo" />
 
     <TextView
         android:id="@+id/textViewLabelQuantity"
+        style="@style/LabelStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="Количество марок:"
-        style="@style/LabelStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewNameInfo" />
 
@@ -129,44 +130,45 @@
 
     <TextView
         android:id="@+id/textViewQuantityInfo"
+        style="@style/TextDataStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="TextView"
-        android:textColor="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
         app:layout_constraintTop_toBottomOf="@+id/textViewNameInfo" />
 
     <TextView
-        android:id="@+id/textViewLabelDataRelease"
+        android:id="@+id/textViewLabelDateRelease"
+        style="@style/LabelStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="Дата выпуска:"
-        style="@style/LabelStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewQuantityInfo" />
 
     <TextView
-        android:id="@+id/textViewDataReleaseInfo"
+        android:id="@+id/textViewDateReleaseInfo"
+        style="@style/TextDataStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="TextView"
-        android:textColor="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
         app:layout_constraintTop_toBottomOf="@+id/textViewQuantityInfo" />
+
     <View
+        android:id="@+id/view9"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/white"
         android:layout_margin="4dp"
-        app:layout_constraintStart_toStartOf ="parent"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewDataReleaseInfo"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDateReleaseInfo" />
 
     <TextView
         android:id="@+id/textViewLabelCatalogNumbers"
@@ -174,29 +176,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="Номер по каталогам:"
+        android:layout_marginTop="8dp"
+        android:text="Номера по каталогам:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewLabelDataRelease" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewDateReleaseInfo" />
 
     <TextView
         android:id="@+id/textViewCatalogNumbersInfo"
+        style="@style/TextDataStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="TextView"
-        android:textColor="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
-        app:layout_constraintTop_toBottomOf="@+id/textViewDataReleaseInfo" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewDateReleaseInfo" />
+
     <View
+        android:id="@+id/view10"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/white"
         android:layout_margin="4dp"
-        app:layout_constraintStart_toStartOf ="parent"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewCatalogNumbersInfo"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCatalogNumbersInfo" />
 
     <TextView
         android:id="@+id/textViewLabelPrice"
@@ -204,29 +208,60 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="Цена на рынке:"
+        android:layout_marginTop="9dp"
+        android:text="Цена рыночная (руб.):"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewLabelCatalogNumbers" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewCatalogNumbersInfo" />
 
     <TextView
         android:id="@+id/textViewPriceInfo"
+        style="@style/TextDataStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="TextView"
-        android:textColor="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
-        app:layout_constraintTop_toBottomOf="@+id/textViewCatalogNumbersInfo"/>
+        app:layout_constraintTop_toBottomOf="@+id/textViewCatalogNumbersInfo" />
+
     <View
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/white"
         android:layout_margin="4dp"
-        app:layout_constraintStart_toStartOf ="parent"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPriceInfo"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPriceInfo" />
+
+    <TextView
+        android:id="@+id/textViewLabelSpecifications"
+        style="@style/LabelStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Тираж (тыс.):"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPriceInfo" />
+
+    <TextView
+        android:id="@+id/textViewSpecificationsInfo"
+        style="@style/TextDataStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPriceInfo" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_margin="4dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSpecificationsInfo" />
 
     <TextView
         android:id="@+id/textViewLabelOverview"
@@ -236,14 +271,17 @@
         android:layout_margin="8dp"
         android:text="Описание:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewLabelPrice" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewSpecificationsInfo" />
+
     <TextView
         android:id="@+id/textViewOverviewInfo"
         style="@style/TextDataStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="text"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="8dp"
+        android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewLabelOverview" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,15 +7,16 @@ import androidx.room.PrimaryKey;
 @Entity(tableName ="stamps")
 public class Stamp{
     @PrimaryKey(autoGenerate = true)
-    int id;
+    long id;
 
     int idStamp;   //*
     private String theme;
     private String country;
     private int year;   //*
-    private String dataRelease;
+    private String dateRelease;
     private String name;           //*
     private String overview;
+    private String specifications;    //тираж
     private String quantity;        //*
     private String catalogNumberITC;    //*
     private String catalogNumberSK;     //*
@@ -29,15 +30,16 @@ public class Stamp{
     private String detailUrl;           //*
     private boolean flag;
 
-    public Stamp(int id, int idStamp, String theme, String country, int year, String dataRelease, String name, String overview, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String catalogNumberScott, String catalogNumberCgib, String price, String photoPath, String bigPhotoPath, String detailUrl, boolean flag) {
+    public Stamp(long id, int idStamp, String theme, String country, int year, String dateRelease, String name, String overview, String specifications, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String catalogNumberScott, String catalogNumberCgib, String price, String photoPath, String bigPhotoPath, String detailUrl, boolean flag) {
         this.id = id;
         this.idStamp = idStamp;
         this.theme = theme;
         this.country = country;
         this.year = year;
-        this.dataRelease = dataRelease;
+        this.dateRelease = dateRelease;
         this.name = name;
         this.overview = overview;
+        this.specifications = specifications;
         this.quantity = quantity;
         this.catalogNumberITC = catalogNumberITC;
         this.catalogNumberSK = catalogNumberSK;
@@ -62,9 +64,19 @@ public class Stamp{
         this.catalogNumberMich = catalogNumberMich;
         this.price = price;
         this.detailUrl = detailUrl;
+
+        this.flag = false;
+    }
+    @Ignore
+    public Stamp(String country, String dateRelease, String overview, String specifications, String bigPhotoPath) {
+        this.country = country;
+        this.dateRelease = dateRelease;
+        this.overview = overview;
+        this.specifications = specifications;
+        this.bigPhotoPath = bigPhotoPath;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -84,8 +96,8 @@ public class Stamp{
         this.year = year;
     }
 
-    public void setDataRelease(String dataRelease) {
-        this.dataRelease = dataRelease;
+    public void setDateRelease(String dateRelease) {
+        this.dateRelease = dateRelease;
     }
 
     public void setName(String name) {
@@ -94,6 +106,15 @@ public class Stamp{
 
     public void setOverview(String overview) {
         this.overview = overview;
+    }
+
+
+    public String getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(String specifications) {
+        this.specifications = specifications;
     }
 
     public void setQuantity(String quantity) {
@@ -140,7 +161,7 @@ public class Stamp{
         this.flag = flag;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -160,8 +181,8 @@ public class Stamp{
         return year;
     }
 
-    public String getDataRelease() {
-        return dataRelease;
+    public String getDateRelease() {
+        return dateRelease;
     }
 
     public String getName() {

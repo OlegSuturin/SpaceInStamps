@@ -25,6 +25,7 @@ import com.oliverst.spaceinstamps.data.MainViewModel;
 import com.oliverst.spaceinstamps.data.Stamp;
 import com.oliverst.spaceinstamps.utils.NetworkUtils;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,10 +84,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter.setOnStampClickListener(new StampAdapter.OnStampClickListener() {
             @Override
             public void onStampClick(int position) {
-                //Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
                 Stamp stamp = adapter.getStamps().get(position);
                 Intent intent = new Intent(MainActivity.this, DetailStamp.class);
-                intent.putExtra("id", stamp.getId());
+                intent.putExtra("idStamp", stamp.getIdStamp());
                 startActivity(intent);
             }
         });
@@ -146,17 +147,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Toast.makeText(this, "данные не загружены", Toast.LENGTH_SHORT).show();
         }
         if (pageG == 1) {
-          //  adapter.clearStamps();
+            adapter.clearStamps();
             viewModel.deleteAllStamps();
             int recordsNumber = NetworkUtils.parserRecordsNumber(data);
             Toast.makeText(MainActivity.this, "Всего найдено: " + recordsNumber, Toast.LENGTH_SHORT).show();
         }
         ArrayList<Stamp> stamps = NetworkUtils.parserTitlesStamp(data);
         if (stamps != null && !stamps.isEmpty()) {
-          //  adapter.addStamps(stamps);
+
             for(Stamp stamp: stamps){
+                                                    //загрузка детальной информации
+//                String urlAsStringDetail = stamp.getDetailUrl();
+//                String line =  NetworkUtils.getDetailFromNetwork(urlAsStringDetail);
+//                Log.i("!@#", line);
+
                 viewModel.insertStamp(stamp);
             }
+            //adapter.addStamps(stamps);
             pageG++;
         }
         isLoading = false;  //загрузка закончилась

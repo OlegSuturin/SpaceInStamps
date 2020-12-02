@@ -14,7 +14,7 @@ public interface StampDao {
     @Query("SELECT * FROM stamps")
     LiveData<List<Stamp>> getAllStamps();
 
-    @Query("SELECT * FROM stamps WHERE id == :id")
+    @Query("SELECT * FROM stamps WHERE idStamp == :id")
     Stamp getStampById(int id);
 
     @Insert
