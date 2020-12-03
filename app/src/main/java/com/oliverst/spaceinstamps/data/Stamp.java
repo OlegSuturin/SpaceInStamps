@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey;
 @Entity(tableName ="stamps")
 public class Stamp{
     @PrimaryKey(autoGenerate = true)
-    long id;
+    private long id;
 
-    int idStamp;   //*
+    private int idStamp;   //*
     private String theme;
     private String country;
     private int year;   //*
@@ -68,7 +68,7 @@ public class Stamp{
         this.flag = false;
     }
     @Ignore
-    public Stamp(String country, String dateRelease, String overview, String specifications, String bigPhotoPath) {
+    public Stamp(String country, String dateRelease, String overview, String specifications) {
         this.country = country;
         this.dateRelease = dateRelease;
         this.overview = overview;

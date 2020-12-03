@@ -247,8 +247,35 @@ public class NetworkUtils {
             specifications = matcherSpecifications.group(1);
         }
 
-        return new Stamp(country, dateRelease, overview, specifications, "");
+//        String bigPhotoPath = "";
+//        String stringBigPhotoPath = "http://(.*?).jpg";
+//        Pattern patternPath = Pattern.compile(stringBigPhotoPath);
+//        Matcher matcherPath = patternPath.matcher(buf);
+//        if(matcherPath.find()){
+//            bigPhotoPath = matcherPath.group(0);
+//        }
 
+        return new Stamp(country, dateRelease, overview, specifications);
+    }
+
+    public static ArrayList<String> parseImagesUrl(String data){
+        String buf = "";
+        String stringPatternBuf = "Страна:</FONT>(.*?)</td></tr></table></td></tr></table><br></center></TD>";
+        Pattern patternBuf = Pattern.compile(stringPatternBuf);
+        Matcher matcherBuf = patternBuf.matcher(data);
+        if (matcherBuf.find()) {
+            buf = matcherBuf.group(0);
+        }
+
+        ArrayList<String> imagesUrl = new ArrayList<>();
+        String stringPatternImageUrl = "http://(.*?).jpg";
+        Pattern patternImageUrl = Pattern.compile(stringPatternImageUrl);
+        Matcher matcherImageUrl = patternImageUrl.matcher(buf);
+        while (matcherImageUrl.find()){
+            String url = matcherImageUrl.group(0);
+            imagesUrl.add(url);
+        }
+            return imagesUrl;
     }
 
     //МЕТОД, ФОРМИРУЕТ СТРОКУ ЗАПРОСА URL

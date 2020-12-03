@@ -6,15 +6,19 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oliverst.spaceinstamps.adapters.StampAdapter;
+import com.oliverst.spaceinstamps.data.ImageUrl;
 import com.oliverst.spaceinstamps.data.MainViewModel;
 import com.oliverst.spaceinstamps.data.Stamp;
 import com.oliverst.spaceinstamps.utils.NetworkUtils;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DetailStamp extends AppCompatActivity {
     private int idStamp;
@@ -27,6 +31,7 @@ public class DetailStamp extends AppCompatActivity {
     private TextView textViewPriceInfo;
     private TextView textViewSpecificationsInfo;
     private TextView textViewOverviewInfo;
+    private ImageView imageViewBigStamp;
 
     private MainViewModel viewModel;
 
@@ -46,35 +51,49 @@ public class DetailStamp extends AppCompatActivity {
         textViewPriceInfo = findViewById(R.id.textViewPriceInfo);
         textViewSpecificationsInfo = findViewById(R.id.textViewSpecificationsInfo);
         textViewOverviewInfo = findViewById(R.id.textViewOverviewInfo);
+        imageViewBigStamp = findViewById(R.id.imageViewBigStamp);
 
 
         Intent intent = getIntent();                                    //! проверяем Интент и наличие параметров
         if (intent != null && intent.hasExtra("idStamp")) {
             idStamp = intent.getIntExtra("idStamp", -1);
-            Toast.makeText(this, "" + idStamp, Toast.LENGTH_SHORT).show();
         } else {
             finish();               //  закрываем активность, если что то не так
         }
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(MainViewModel.class);
         Stamp stamp = viewModel.getStampById(idStamp);
 
-        //загрузка детальной информации
-        String urlAsStringDetail = stamp.getDetailUrl();
-                                //"http://www.philately.ru/cgi-bin/sql/search1.cgi?action=view_details&id=3863";
-                                //stamp.getDetailUrl();
-        String data = NetworkUtils.getDetailFromNetwork(urlAsStringDetail);
-        // Log.i("!@#", line);
-        if (data == null) {
-            Toast.makeText(this, "данные не загружены", Toast.LENGTH_SHORT).show();
-            finish();               //  закрываем активность, если что то не так
+        if (!stamp.isFlag()) {
+            Toast.makeText(this, "" + stamp.isFlag(), Toast.LENGTH_SHORT).show();
+            //загрузка детальной информации
+            String urlAsStringDetail = stamp.getDetailUrl();
+            //"http://www.philately.ru/cgi-bin/sql/search1.cgi?action=view_details&id=3863";
+            //stamp.getDetailUrl();
+            String data = NetworkUtils.getDetailFromNetwork(urlAsStringDetail);
+            if (data == null) {
+                Toast.makeText(this, "данные не загружены", Toast.LENGTH_SHORT).show();
+                finish();               //  закрываем активность, если что то не так
+            }
+            Stamp stampDetail = NetworkUtils.parserDetailStamp(data, Integer.toString(stamp.getYear()));
+            stamp.setCountry(stampDetail.getCountry());
+            stamp.setDateRelease(stampDetail.getDateRelease());
+            stamp.setOverview(stampDetail.getOverview());
+            stamp.setSpecifications(stampDetail.getSpecifications());
+            //stamp.setBigPhotoPath(stampDetail.getBigPhotoPath());
+            //пути к картинкам здесь
+
+            ArrayList<String> imagesUrlString = NetworkUtils.parseImagesUrl(data);
+
+            for (int i = 0; i < imagesUrlString.size(); i++) {
+                ImageUrl imageUrl = new ImageUrl(idStamp, imagesUrlString.get(i));
+                // Log.i("!@#", imageUrl.getUrl());
+                viewModel.insertImageUrl(imageUrl);
+            }
+
+            stamp.setFlag(true);  // установили flag - информация загружена вся
+            viewModel.updateStamp(stamp);
         }
-        Stamp stampDetail = NetworkUtils.parserDetailStamp(data, Integer.toString(stamp.getYear()));
-        stamp.setCountry(stampDetail.getCountry());
-        stamp.setDateRelease(stampDetail.getDateRelease());
-        stamp.setOverview(stampDetail.getOverview());
-        stamp.setSpecifications(stampDetail.getSpecifications());
-        //путь к картинке здесь
-        stamp.setFlag(true);
+
 
         textViewCountryInfo.setText(stamp.getCountry());
         textViewYearInfo.setText(Integer.toString(stamp.getYear()));
@@ -84,7 +103,19 @@ public class DetailStamp extends AppCompatActivity {
         textViewPriceInfo.setText(stamp.getPrice());
         textViewSpecificationsInfo.setText(stamp.getSpecifications());
         textViewOverviewInfo.setText(stamp.getOverview());
+        // textViewOverviewInfo.setText(stamp.getBigPhotoPath());
         String catalogNumbers = String.format("ИТС: %s СК: %s Михель: %s", stamp.getCatalogNumberITC(), stamp.getCatalogNumberSK(), stamp.getCatalogNumberMich());
         textViewCatalogNumbersInfo.setText(catalogNumbers);
+
+        List<ImageUrl> imagesUrl = viewModel.getImagesUrlById(idStamp);
+//        for (ImageUrl url : imagesUrl) {
+//            Log.i("!@#", url.getUrl());
+//        }
+        if (imagesUrl.size() > 0){
+            Picasso.get().load(imagesUrl.get(0).getUrl())
+                    //.placeholder(R.drawable.placeholder)
+                    .into(imageViewBigStamp);
+        }
+
     }
 }

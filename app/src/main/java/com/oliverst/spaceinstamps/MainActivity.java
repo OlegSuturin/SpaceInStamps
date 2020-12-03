@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter.setOnStampClickListener(new StampAdapter.OnStampClickListener() {
             @Override
             public void onStampClick(int position) {
-                Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
                 Stamp stamp = adapter.getStamps().get(position);
                 Intent intent = new Intent(MainActivity.this, DetailStamp.class);
                 intent.putExtra("idStamp", stamp.getIdStamp());
@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (pageG == 1) {
             adapter.clearStamps();
             viewModel.deleteAllStamps();
+            viewModel.deleteAllImageUrlTask();
             int recordsNumber = NetworkUtils.parserRecordsNumber(data);
             Toast.makeText(MainActivity.this, "Всего найдено: " + recordsNumber, Toast.LENGTH_SHORT).show();
         }
