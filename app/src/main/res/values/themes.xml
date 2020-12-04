@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.SpaceInStamps" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">@color/black</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -15,11 +15,16 @@
     </style>
 
     <style name="LabelStyle">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@android:color/holo_orange_light</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
     </style>
     <style name="TextDataStyle">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
+    </style>
+    <style name="LineStyle">
+        <item name="android:background">@android:color/darker_gray</item>
     </style>
 
 </resources>
+

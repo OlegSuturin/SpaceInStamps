@@ -2,6 +2,9 @@ package com.oliverst.spaceinstamps;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.oliverst.spaceinstamps.adapters.ImagesAdapter;
 import com.oliverst.spaceinstamps.adapters.StampAdapter;
 import com.oliverst.spaceinstamps.data.ImageUrl;
 import com.oliverst.spaceinstamps.data.MainViewModel;
@@ -31,8 +35,9 @@ public class DetailStamp extends AppCompatActivity {
     private TextView textViewPriceInfo;
     private TextView textViewSpecificationsInfo;
     private TextView textViewOverviewInfo;
-    private ImageView imageViewBigStamp;
-
+   // private ImageView imageViewBigStamp;
+    private RecyclerView recyclerViewImagesInfo;
+    private ImagesAdapter adapter;
     private MainViewModel viewModel;
 
     private String detailUrl;
@@ -51,7 +56,10 @@ public class DetailStamp extends AppCompatActivity {
         textViewPriceInfo = findViewById(R.id.textViewPriceInfo);
         textViewSpecificationsInfo = findViewById(R.id.textViewSpecificationsInfo);
         textViewOverviewInfo = findViewById(R.id.textViewOverviewInfo);
-        imageViewBigStamp = findViewById(R.id.imageViewBigStamp);
+        //imageViewBigStamp = findViewById(R.id.imageViewBigStamp);
+        adapter = new ImagesAdapter();
+        recyclerViewImagesInfo = findViewById(R.id.recyclerViewImagesInfo);
+
 
 
         Intent intent = getIntent();                                    //! проверяем Интент и наличие параметров
@@ -103,19 +111,26 @@ public class DetailStamp extends AppCompatActivity {
         textViewPriceInfo.setText(stamp.getPrice());
         textViewSpecificationsInfo.setText(stamp.getSpecifications());
         textViewOverviewInfo.setText(stamp.getOverview());
-        // textViewOverviewInfo.setText(stamp.getBigPhotoPath());
         String catalogNumbers = String.format("ИТС: %s СК: %s Михель: %s", stamp.getCatalogNumberITC(), stamp.getCatalogNumberSK(), stamp.getCatalogNumberMich());
         textViewCatalogNumbersInfo.setText(catalogNumbers);
 
         List<ImageUrl> imagesUrl = viewModel.getImagesUrlById(idStamp);
+
+        recyclerViewImagesInfo.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewImagesInfo.setAdapter(adapter);
+        adapter.setImagesUrl(imagesUrl);
+
+        adapter.setOnImageClickListener(new ImagesAdapter.OnImageClickListener() {
+            @Override
+            public void onImageClick(int position) {
+                Toast.makeText(DetailStamp.this, "" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
 //        for (ImageUrl url : imagesUrl) {
 //            Log.i("!@#", url.getUrl());
 //        }
-        if (imagesUrl.size() > 0){
-            Picasso.get().load(imagesUrl.get(0).getUrl())
-                    //.placeholder(R.drawable.placeholder)
-                    .into(imageViewBigStamp);
-        }
 
     }
 }
