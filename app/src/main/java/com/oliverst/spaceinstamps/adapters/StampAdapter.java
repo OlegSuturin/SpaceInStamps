@@ -81,7 +81,7 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHo
         holder.textViewReleaseYear.setText(Integer.toString(stamp.getYear()));
         holder.textViewName.setText(stamp.getName());
         String catalogNumbers = String.format("ИТС:%s СК:%s Михель:%s", stamp.getCatalogNumberITC(), stamp.getCatalogNumberSK(), stamp.getCatalogNumberMich());
-        holder.textViewCatalogNumbers.setText(catalogNumbers);
+       // holder.textViewCatalogNumbers.setText(catalogNumbers);
         holder.textViewQuantity.setText(stamp.getQuantity());
     }
 
@@ -93,14 +93,14 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHo
     class StampsViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewReleaseYear;
         private TextView textViewName;
-        private TextView textViewCatalogNumbers;
+       // private TextView textViewCatalogNumbers;
         private TextView textViewQuantity;
 
         public StampsViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewReleaseYear = itemView.findViewById(R.id.textViewYear);
             textViewName = itemView.findViewById(R.id.textViewName);
-            textViewCatalogNumbers = itemView.findViewById(R.id.textViewCatalogNumbers);
+           // textViewCatalogNumbers = itemView.findViewById(R.id.textViewCatalogNumbers);
             textViewQuantity = itemView.findViewById(R.id.textViewQuantity);
 
             itemView.setOnClickListener(new View.OnClickListener() {

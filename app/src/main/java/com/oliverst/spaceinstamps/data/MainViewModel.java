@@ -59,7 +59,7 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-    public List<ImageUrl> getImagesUrlById(int id) {
+    public List<ImageUrl> getImagesUrlById(long id) {
         try {
             return new GetUrlByIdTask().execute(id).get();
         } catch (ExecutionException e) {
@@ -70,11 +70,11 @@ public class MainViewModel extends AndroidViewModel {
         return null;
     }
 
-    private static class GetUrlByIdTask extends AsyncTask<Integer, Void, List<ImageUrl>> {       //первый параметр - принимает, последний - возвращает
+    private static class GetUrlByIdTask extends AsyncTask<Long, Void, List<ImageUrl>> {       //первый параметр - принимает, последний - возвращает
         @Override
-        protected List<ImageUrl> doInBackground(Integer... integers) {
-            if (integers != null && integers.length > 0) {
-                return database.stampDao().getImagesUrlById(integers[0]);   // возвращаем результат
+        protected List<ImageUrl> doInBackground(Long... longs) {
+            if (longs != null && longs.length > 0) {
+                return database.stampDao().getImagesUrlById(longs[0]);   // возвращаем результат
             }
             return null;
         }
@@ -139,7 +139,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
 
-    public Stamp getStampById(int id) {
+    public Stamp getStampById(long id) {
         try {
             return new GetStampByIdTask().execute(id).get();
         } catch (ExecutionException e) {
@@ -150,11 +150,11 @@ public class MainViewModel extends AndroidViewModel {
         return null;
     }
 
-    private static class GetStampByIdTask extends AsyncTask<Integer, Void, Stamp> {       //первый параметр - принимает, последний - возвращает
+    private static class GetStampByIdTask extends AsyncTask<Long, Void, Stamp> {       //первый параметр - принимает, последний - возвращает
         @Override
-        protected Stamp doInBackground(Integer... integers) {
-            if (integers != null && integers.length > 0) {
-                return database.stampDao().getStampById(integers[0]);   // возвращаем результат Stamp
+        protected Stamp doInBackground(Long... longs) {
+            if (longs != null && longs.length > 0) {
+                return database.stampDao().getStampById(longs[0]);   // возвращаем результат Stamp
             }
             return null;
         }

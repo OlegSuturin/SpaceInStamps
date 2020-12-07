@@ -17,8 +17,8 @@ public interface StampDao {
     @Query("SELECT * FROM stamps")
     LiveData<List<Stamp>> getAllStamps();
 
-    @Query("SELECT * FROM stamps WHERE idStamp == :id")
-    Stamp getStampById(int id);
+    @Query("SELECT * FROM stamps WHERE id == :id")
+    Stamp getStampById(long id);
 
     @Insert
     void insertStamp(Stamp stamp);
@@ -37,7 +37,7 @@ public interface StampDao {
     LiveData<List<ImageUrl>> getAllImagesUrl();
 
      @Query("SELECT * FROM images_url WHERE idStamp == :id")
-     List<ImageUrl> getImagesUrlById(int id);
+     List<ImageUrl> getImagesUrlById(long id);
 
     @Insert
     void insertImageUrl(ImageUrl imageUrl);

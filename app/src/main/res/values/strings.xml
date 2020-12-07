@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">SpaceInStamps</string>
+    <string name="left"><![CDATA[<]]></string>
+    <string name="right"><![CDATA[>]]></string>
     <string-array name="themes_array_string">
         <item>Космос</item>
         <item>Флора</item>
