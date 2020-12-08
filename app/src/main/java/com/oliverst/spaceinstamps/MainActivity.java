@@ -43,12 +43,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private LoaderManager loaderManager;      //  - менеджер загрузок
     private ProgressBar progressBarLoading;
     private MainViewModel viewModel;
-    private int recordsNumberG;
+    private int recordsNumberG;             //кол-во записей найдено
+
+    private LiveData<List<Stamp>> stampsFromLiveData;
+
 
     @Override
-    protected void onResume() {
-        super.onResume();
-       // Toast.makeText(MainActivity.this, "Main", Toast.LENGTH_SHORT).show();
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (data != null && data.hasExtra("page")){
+            int page = data.getIntExtra("page", -1);
+            Toast.makeText(this, "" + page, Toast.LENGTH_SHORT).show();
+            pageG = page;
+            List<Stamp> stamps = stampsFromLiveData.getValue();
+            adapter.setStamps(stamps);
+        }
     }
 
     @Override
@@ -73,9 +83,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 theme = (String) parent.getSelectedItem();
                 pageG = 1;
                 recordsNumberG = 0;
-                    if (!isLoading) {   //если процесс загрузки не идет
-                        downLoadData(position);
-                    }
+                if (!isLoading) {   //если процесс загрузки не идет
+                    downLoadData(position);
+                }
             }
 
             @Override
@@ -89,10 +99,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onStampClick(int position) {
                 // Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+                int positionTheme = spinnerThemeSelect.getSelectedItemPosition();
                 Stamp stamp = adapter.getStamps().get(position);
                 Intent intent = new Intent(MainActivity.this, DetailStamp.class);
                 intent.putExtra("id", stamp.getId());
-                startActivity(intent);
+                intent.putExtra("recordsNum", recordsNumberG);
+                intent.putExtra("currentNum", position + 1);
+                intent.putExtra("page", pageG);
+                intent.putExtra("positionTheme", positionTheme);
+                startActivityForResult(intent, RESULT_FIRST_USER);
 
             }
         });
@@ -105,15 +120,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 if (!isLoading) {   //если процесс загрузки не идет
                     int position = spinnerThemeSelect.getSelectedItemPosition();
                     downLoadData(position);
+                    // Toast.makeText(MainActivity.this, "pageG: "+ pageG, Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        LiveData<List<Stamp>> stampsFromLiveData = viewModel.getStampsLiveData();
+        stampsFromLiveData = viewModel.getStampsLiveData();
         stampsFromLiveData.observe(this, new Observer<List<Stamp>>() {
             @Override
             public void onChanged(List<Stamp> stamps) {
 //                if (pageG == 1) {
-                adapter.setStamps(stamps);    // если отсутствует интернет устанавливаем на адаптер данные из БД
+                adapter.setStamps(stamps);
 //                    //ЛОГИКА ПРИЛОЖЕНИЯ
 //                }
             }

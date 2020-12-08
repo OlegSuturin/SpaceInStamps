@@ -15,7 +15,7 @@
         android:paddingBottom="4dp">
 
         <TextView
-            android:id="@+id/textViewYear"
+            android:id="@+id/textViewNum"
             style="@style/TextDataStyle"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
@@ -25,11 +25,28 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.08" />
+
+        <TextView
+            android:id="@+id/textViewYear"
+            style="@style/TextDataStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:text="Text"
+            app:layout_constraintStart_toStartOf="@+id/guideline0"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.15" />
+            app:layout_constraintGuide_percent="0.2" />
 
         <TextView
             android:id="@+id/textViewName"
@@ -48,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.8" />
+            app:layout_constraintGuide_percent="0.85" />
 
         <TextView
             android:id="@+id/textViewQuantity"

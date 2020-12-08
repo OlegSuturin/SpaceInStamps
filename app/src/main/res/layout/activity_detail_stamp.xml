@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
+
+
     <ScrollView
         android:id="@+id/scrollViewInfo"
         android:layout_width="match_parent"
@@ -38,30 +40,62 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/stampInfo" />
 
+
+
         </LinearLayout>
     </ScrollView>
+
     <TextView
+        style="@style/LabelStyle"
         android:id="@+id/textViewLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/left"
-        android:textColor="@color/white"
-        android:textSize="32sp"
+        android:layout_marginEnd="48dp"
         android:onClick="onClickLeft"
-        android:layout_marginStart="16dp"
+        android:text="@string/left"
+        android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/textViewRight" />
 
     <TextView
+        style="@style/LabelStyle"
         android:id="@+id/textViewRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/right"
-        android:textColor="@color/white"
-        android:textSize="32sp"
+        android:textSize="22sp"
         android:onClick="onClickRight"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineNav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"/>
+
+    <TextView
+        style="@style/LabelStyle"
+        android:id="@+id/textViewNumRecord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineNav"
+        app:layout_constraintStart_toStartOf="@+id/guidelineNav"
+        app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo" />
+
+    <ProgressBar
+        android:id="@+id/progressBarLoadingOnDetail"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

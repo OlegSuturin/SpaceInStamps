@@ -32,6 +32,9 @@ public interface StampDao {
     @Query("DELETE FROM stamps")
     void deleteAllStamps();
 
+    @Query("SELECT COUNT(*) FROM stamps")
+    int getItemCountStamps();
+
 // таблица images_url
     @Query("SELECT * FROM images_url")
     LiveData<List<ImageUrl>> getAllImagesUrl();

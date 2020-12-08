@@ -1,7 +1,11 @@
 package com.oliverst.spaceinstamps;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,11 +27,17 @@ import com.oliverst.spaceinstamps.data.Stamp;
 import com.oliverst.spaceinstamps.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailStamp extends AppCompatActivity {
+public class DetailStamp extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
     private long id;
+    private int recordsNum;
+    private int currentNum;
+    private int page;
+    private int positionTheme;
+
     private TextView textViewCountryInfo;
     private TextView textViewYearInfo;
     private TextView textViewNameInfo;
@@ -36,12 +47,85 @@ public class DetailStamp extends AppCompatActivity {
     private TextView textViewPriceInfo;
     private TextView textViewSpecificationsInfo;
     private TextView textViewOverviewInfo;
-    // private ImageView imageViewBigStamp;
+
     private RecyclerView recyclerViewImagesInfo;
+    private TextView textViewNumRecord;
+
     private ImagesAdapter adapter;
     private MainViewModel viewModel;
     private Stamp stamp;
     private String detailUrl;
+    private OnReachEndListener onReachEndListener;
+    private static boolean isLoading = false;
+    private static final int LOADER_ID = 1133; // - уникальный идентификатор загрузчика, определяем сами
+    private LoaderManager loaderManager;      //  - менеджер загрузок
+    private ProgressBar progressBarLoadingOnDetail;
+
+    @Override
+    public void onBackPressed() {
+
+        Log.i("!@#", "onBackPressed");
+        Intent intent = new Intent(DetailStamp.this, MainActivity.class);
+        intent.putExtra("page", page);
+        setResult(RESULT_OK, intent);
+
+        super.onBackPressed();
+    }
+
+
+    //----------------------------------loader-------------------------------------
+    @NonNull
+    @Override
+    public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
+        NetworkUtils.DataLoader dataLoader = new NetworkUtils.DataLoader(this, args);
+        //слушатель на начало загрузки
+        dataLoader.setOnStartLoadingListener(new NetworkUtils.DataLoader.OnStartLoadingListener() {
+            @Override
+            public void onStartLoading() {
+                progressBarLoadingOnDetail.setVisibility(View.VISIBLE);
+                isLoading = true;         //загрузка началась
+            }
+        });
+        return dataLoader;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<String> loader, String data) {
+        if (data == null) {
+            Toast.makeText(this, "данные не загружены", Toast.LENGTH_SHORT).show();
+        }
+        ArrayList<Stamp> stamps = NetworkUtils.parserTitlesStamp(data);
+        if (stamps != null && !stamps.isEmpty()) {
+            for (Stamp stamp : stamps) {
+                viewModel.insertStamp(stamp);
+            }
+            page++;
+        }
+        isLoading = false;  //загрузка закончилась
+        progressBarLoadingOnDetail.setVisibility(View.INVISIBLE);
+        loaderManager.destroyLoader(LOADER_ID);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<String> loader) {
+    }
+
+    //-------------------------------------------------------------------------------------------
+    private void downLoadData() {
+        URL url = NetworkUtils.buildURL(positionTheme, page);
+        Bundle bundle = new Bundle();
+        bundle.putString("url", url.toString());
+        loaderManager.restartLoader(LOADER_ID, bundle, this);   //запускаем загрузчик
+    }
+
+    //-----Слушатель на достижение конца списка
+    public interface OnReachEndListener {
+        void onReachEnd();
+    }
+
+    public void setOnReachEndListener(OnReachEndListener onReachEndListener) {
+        this.onReachEndListener = onReachEndListener;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,30 +141,39 @@ public class DetailStamp extends AppCompatActivity {
         textViewPriceInfo = findViewById(R.id.textViewPriceInfo);
         textViewSpecificationsInfo = findViewById(R.id.textViewSpecificationsInfo);
         textViewOverviewInfo = findViewById(R.id.textViewOverviewInfo);
-        //imageViewBigStamp = findViewById(R.id.imageViewBigStamp);
+
         adapter = new ImagesAdapter();
         recyclerViewImagesInfo = findViewById(R.id.recyclerViewImagesInfo);
-
+        textViewNumRecord = findViewById(R.id.textViewNumRecord);
+        progressBarLoadingOnDetail = findViewById(R.id.progressBarLoadingOnDetail);
 
         Intent intent = getIntent();                                    //! проверяем Интент и наличие параметров
-        if (intent != null && intent.hasExtra("id")) {
+        if (intent != null && intent.hasExtra("id") && intent.hasExtra("recordsNum") && intent.hasExtra("currentNum") && intent.hasExtra("page") && intent.hasExtra("positionTheme")) {
             id = intent.getLongExtra("id", -1);
+            recordsNum = intent.getIntExtra("recordsNum", -1);
+            currentNum = intent.getIntExtra("currentNum", -1);
+            page = intent.getIntExtra("page", -1);
+            positionTheme = intent.getIntExtra("positionTheme", -1);
+
         } else {
             finish();               //  закрываем активность, если что то не так
         }
+
+        loaderManager = LoaderManager.getInstance(this);
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(MainViewModel.class);
         stamp = viewModel.getStampById(id);
-        if (stamp==null){
+        if (stamp == null) {
             Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
             finish();               //  закрываем активность, если что то не так
         }
 
         if (!stamp.isFlag()) {   //загрузка детальной информации из интернета
             downloadDetail();
-
         }
 
         applyDetail();  //применить детальную информацию на экран
+
+        textViewNumRecord.setText("№ " + currentNum + " из " + recordsNum);
 
         adapter.setOnImageClickListener(new ImagesAdapter.OnImageClickListener() {
             @Override
@@ -89,9 +182,19 @@ public class DetailStamp extends AppCompatActivity {
             }
         });
 
+        setOnReachEndListener(new OnReachEndListener() {   //догрузка данных
+            @Override
+            public void onReachEnd() {
+                Toast.makeText(DetailStamp.this, "Достижение конца списка " + page, Toast.LENGTH_SHORT).show();
+                if (!isLoading) {   //если процесс загрузки не идет
+                    downLoadData();
+                }
+            }
+        });
+
     }
 
-    public void downloadDetail(){
+    public void downloadDetail() {
         //загрузка детальной информации
         String urlAsStringDetail = stamp.getDetailUrl();
         //"http://www.philately.ru/cgi-bin/sql/search1.cgi?action=view_details&id=3863";
@@ -106,8 +209,6 @@ public class DetailStamp extends AppCompatActivity {
         stamp.setDateRelease(stampDetail.getDateRelease());
         stamp.setOverview(stampDetail.getOverview());
         stamp.setSpecifications(stampDetail.getSpecifications());
-        //stamp.setBigPhotoPath(stampDetail.getBigPhotoPath());
-        //пути к картинкам здесь
 
         ArrayList<String> imagesUrlString = NetworkUtils.parseImagesUrl(data);
 
@@ -121,7 +222,7 @@ public class DetailStamp extends AppCompatActivity {
         viewModel.updateStamp(stamp);
     }
 
-    public void applyDetail(){
+    public void applyDetail() {
 
         textViewCountryInfo.setText(stamp.getCountry());
         textViewYearInfo.setText(Integer.toString(stamp.getYear()));
@@ -142,30 +243,42 @@ public class DetailStamp extends AppCompatActivity {
     }
 
     public void onClickLeft(View view) {
-        id--;
-        stamp = viewModel.getStampById(id);
-        if (stamp==null){
-            Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
-        }else{
-            if (!stamp.isFlag()) {   //загрузка детальной информации из интернета
-                downloadDetail();
+        if (currentNum > 1) {
+            id--;
+            currentNum--;
+            stamp = viewModel.getStampById(id);
+            if (stamp == null) {
+                Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
+            } else {
+                if (!stamp.isFlag()) {   //загрузка детальной информации из интернета
+                    downloadDetail();
+                }
+                applyDetail();  //применить детальную информацию на экран
+                textViewNumRecord.setText("№ " + currentNum + " из " + recordsNum);
             }
-            applyDetail();  //применить детальную информацию на экран
         }
     }
 
 
     public void onClickRight(View view) {
-        id++;
-        stamp = viewModel.getStampById(id);
-        if (stamp==null){
-            Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
-        }else{
-                        if (!stamp.isFlag()) {   //загрузка детальной информации из интернета
-                             downloadDetail();
+        if (onReachEndListener != null && currentNum == viewModel.getItemCountStamps() - 10) {
+            onReachEndListener.onReachEnd();
+        }
 
-                        }
-           applyDetail();  //применить детальную информацию на экран
+        if (currentNum < recordsNum) {
+            id++;
+            currentNum++;
+            stamp = viewModel.getStampById(id);
+            if (stamp == null) {
+                Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
+            } else {
+                if (!stamp.isFlag()) {   //загрузка детальной информации из интернета
+                    downloadDetail();
+                }
+                applyDetail();  //применить детальную информацию на экран
+                textViewNumRecord.setText("№ " + currentNum + " из " + recordsNum);
+            }
         }
     }
+
 }

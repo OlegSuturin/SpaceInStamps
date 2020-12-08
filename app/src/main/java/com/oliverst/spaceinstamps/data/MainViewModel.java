@@ -25,6 +25,8 @@ public class MainViewModel extends AndroidViewModel {
         imagesUrlLiveData = database.stampDao().getAllImagesUrl();
     }
 
+
+
     public LiveData<List<Stamp>> getStampsLiveData() {
         return stampsLiveData;
     }
@@ -84,6 +86,24 @@ public class MainViewModel extends AndroidViewModel {
 
 
     // МЕТОДЫ работы с БД - таблица stamps (таб. stamps - в отдельных потоках , для каждого создан класс Task
+    public int getItemCountStamps() {
+        try {
+            return new countStampsTask().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private static class countStampsTask extends AsyncTask<Void, Void, Integer> {
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return     database.stampDao().getItemCountStamps();
+        }
+    }
+
     public void insertStamp(Stamp stamp) {
         new InsertTask().execute(stamp);
     }
