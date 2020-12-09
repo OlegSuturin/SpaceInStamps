@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,6 +51,8 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
 
     private RecyclerView recyclerViewImagesInfo;
     private TextView textViewNumRecord;
+    private ImageView imageViewLeft;
+    private ImageView imageViewRight;
 
     private ImagesAdapter adapter;
     private MainViewModel viewModel;
@@ -141,6 +144,8 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
         textViewPriceInfo = findViewById(R.id.textViewPriceInfo);
         textViewSpecificationsInfo = findViewById(R.id.textViewSpecificationsInfo);
         textViewOverviewInfo = findViewById(R.id.textViewOverviewInfo);
+        imageViewLeft = findViewById(R.id.imageViewLeft);
+        imageViewRight = findViewById(R.id.imageViewRight);
 
         adapter = new ImagesAdapter();
         recyclerViewImagesInfo = findViewById(R.id.recyclerViewImagesInfo);
@@ -191,8 +196,26 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
                 }
             }
         });
+                                    //свайп
+        ItemTouchHelper itemTouch = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
 
-    }
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                switch (direction){
+                    case ItemTouchHelper.RIGHT: onClickLeft(imageViewRight);
+                                                    break;
+                    case ItemTouchHelper.LEFT: onClickRight(imageViewRight);
+                                                     break;
+                }
+            }
+        });
+        itemTouch.attachToRecyclerView(recyclerViewImagesInfo);
+
+    } //end of onCreate
 
     public void downloadDetail() {
         //загрузка детальной информации
