@@ -13,9 +13,32 @@ import java.util.List;
 @Dao
 public interface StampDao {
 
+    //табл favourite_stamp
+    @Query("SELECT * FROM favourite_stamp")
+    LiveData<List<FavouriteStamp>> getAllFavouriteStamps();
+
+    @Query("SELECT * FROM favourite_stamp WHERE idStamp == :id")
+    FavouriteStamp getFavouriteStampByIdStamp(int id);
+
+    @Query("SELECT * FROM favourite_stamp WHERE id == :id")
+    FavouriteStamp getFavouriteStampById(long id);
+
+    @Insert
+    void insertFavouriteStamp(FavouriteStamp favouriteStamp);
+
+    @Delete
+    void deleteFavouriteStamp(FavouriteStamp favouriteStamp);
+
+    @Query("SELECT COUNT(*) FROM favourite_stamp")
+    int getItemCountFavouriteStamps();
+
+
     //табл stamps
     @Query("SELECT * FROM stamps")
     LiveData<List<Stamp>> getAllStamps();
+
+    @Query("SELECT * FROM stamps WHERE idStamp == :id")
+    Stamp getStampByIdStamp(int id);
 
     @Query("SELECT * FROM stamps WHERE id == :id")
     Stamp getStampById(long id);
@@ -40,7 +63,7 @@ public interface StampDao {
     LiveData<List<ImageUrl>> getAllImagesUrl();
 
      @Query("SELECT * FROM images_url WHERE idStamp == :id")
-     List<ImageUrl> getImagesUrlById(long id);
+     List<ImageUrl> getImagesUrlById(int id);
 
     @Insert
     void insertImageUrl(ImageUrl imageUrl);

@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,23 +20,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oliverst.spaceinstamps.adapters.ImagesAdapter;
-import com.oliverst.spaceinstamps.adapters.StampAdapter;
+import com.oliverst.spaceinstamps.data.FavouriteStamp;
 import com.oliverst.spaceinstamps.data.ImageUrl;
 import com.oliverst.spaceinstamps.data.MainViewModel;
 import com.oliverst.spaceinstamps.data.Stamp;
 import com.oliverst.spaceinstamps.utils.NetworkUtils;
-import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailStamp extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
+public class DetailStampActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
     private long id;
+    private int idStamp;
     private int recordsNum;
     private int currentNum;
     private int page;
     private int positionTheme;
+    private boolean favouriteTag;
 
     private TextView textViewCountryInfo;
     private TextView textViewYearInfo;
@@ -53,10 +53,12 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
     private TextView textViewNumRecord;
     private ImageView imageViewLeft;
     private ImageView imageViewRight;
+    private ImageView imageViewHeart;
 
     private ImagesAdapter adapter;
     private MainViewModel viewModel;
     private Stamp stamp;
+    private FavouriteStamp favouriteStamp;
     private String detailUrl;
     private OnReachEndListener onReachEndListener;
     private static boolean isLoading = false;
@@ -67,8 +69,8 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
     @Override
     public void onBackPressed() {
 
-        Log.i("!@#", "onBackPressed");
-        Intent intent = new Intent(DetailStamp.this, MainActivity.class);
+       // Log.i("!@#", "onBackPressed");
+        Intent intent = new Intent(DetailStampActivity.this, MainActivity.class);
         intent.putExtra("page", page);
         setResult(RESULT_OK, intent);
 
@@ -121,6 +123,7 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
         loaderManager.restartLoader(LOADER_ID, bundle, this);   //запускаем загрузчик
     }
 
+
     //-----Слушатель на достижение конца списка
     public interface OnReachEndListener {
         void onReachEnd();
@@ -129,6 +132,9 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
     public void setOnReachEndListener(OnReachEndListener onReachEndListener) {
         this.onReachEndListener = onReachEndListener;
     }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +152,7 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
         textViewOverviewInfo = findViewById(R.id.textViewOverviewInfo);
         imageViewLeft = findViewById(R.id.imageViewLeft);
         imageViewRight = findViewById(R.id.imageViewRight);
+        imageViewHeart = findViewById((R.id.imageViewHeart));
 
         adapter = new ImagesAdapter();
         recyclerViewImagesInfo = findViewById(R.id.recyclerViewImagesInfo);
@@ -155,10 +162,12 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
         Intent intent = getIntent();                                    //! проверяем Интент и наличие параметров
         if (intent != null && intent.hasExtra("id") && intent.hasExtra("recordsNum") && intent.hasExtra("currentNum") && intent.hasExtra("page") && intent.hasExtra("positionTheme")) {
             id = intent.getLongExtra("id", -1);
+            idStamp = intent.getIntExtra("idStamp", -1);
             recordsNum = intent.getIntExtra("recordsNum", -1);
             currentNum = intent.getIntExtra("currentNum", -1);
             page = intent.getIntExtra("page", -1);
             positionTheme = intent.getIntExtra("positionTheme", -1);
+            favouriteTag = intent.getBooleanExtra("favouriteTag", false);
 
         } else {
             finish();               //  закрываем активность, если что то не так
@@ -166,7 +175,14 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
 
         loaderManager = LoaderManager.getInstance(this);
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(MainViewModel.class);
-        stamp = viewModel.getStampById(id);
+
+        if(favouriteTag){
+            stamp = viewModel.getFavouriteStampByIdStamp(idStamp);
+            id = stamp.getId();
+        }else {
+            stamp = viewModel.getStampByIdStamp(idStamp);
+        }
+
         if (stamp == null) {
             Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
             finish();               //  закрываем активность, если что то не так
@@ -183,14 +199,14 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
         adapter.setOnImageClickListener(new ImagesAdapter.OnImageClickListener() {
             @Override
             public void onImageClick(int position) {
-                Toast.makeText(DetailStamp.this, "" + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailStampActivity.this, "" + position, Toast.LENGTH_SHORT).show();
             }
         });
 
         setOnReachEndListener(new OnReachEndListener() {   //догрузка данных
             @Override
             public void onReachEnd() {
-                Toast.makeText(DetailStamp.this, "Достижение конца списка " + page, Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailStampActivity.this, "Достижение конца списка " + page, Toast.LENGTH_SHORT).show();
                 if (!isLoading) {   //если процесс загрузки не идет
                     downLoadData();
                 }
@@ -200,6 +216,7 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
         ItemTouchHelper itemTouch = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+
                 return false;
             }
 
@@ -207,14 +224,13 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 switch (direction){
                     case ItemTouchHelper.RIGHT: onClickLeft(imageViewRight);
-                                                    break;
+                        break;
                     case ItemTouchHelper.LEFT: onClickRight(imageViewRight);
-                                                     break;
+                        break;
                 }
             }
         });
         itemTouch.attachToRecyclerView(recyclerViewImagesInfo);
-
     } //end of onCreate
 
     public void downloadDetail() {
@@ -237,7 +253,7 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
 
         for (int i = 0; i < imagesUrlString.size(); i++) {
             ImageUrl imageUrl = new ImageUrl(stamp.getIdStamp(), imagesUrlString.get(i));
-            // Log.i("!@#", imageUrl.getUrl());
+           // Log.i("!@#", imageUrl.getUrl());
             viewModel.insertImageUrl(imageUrl);
         }
 
@@ -260,16 +276,24 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
 
         List<ImageUrl> imagesUrl = viewModel.getImagesUrlById(stamp.getIdStamp());
 
+        //Log.i("!@#", imagesUrl.get(0).getUrl());
+
         recyclerViewImagesInfo.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewImagesInfo.setAdapter(adapter);
         adapter.setImagesUrl(imagesUrl);
+        setColorHeart();
     }
 
     public void onClickLeft(View view) {
         if (currentNum > 1) {
             id--;
             currentNum--;
+        }
+        if(favouriteTag){
+           stamp = viewModel.getFavouriteStampById(id);
+        }else {
             stamp = viewModel.getStampById(id);
+        }
             if (stamp == null) {
                 Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
             } else {
@@ -278,7 +302,7 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
                 }
                 applyDetail();  //применить детальную информацию на экран
                 textViewNumRecord.setText("№ " + currentNum + " из " + recordsNum);
-            }
+
         }
     }
 
@@ -291,7 +315,12 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
         if (currentNum < recordsNum) {
             id++;
             currentNum++;
+        }
+        if(favouriteTag){
+            stamp = viewModel.getFavouriteStampById(id);
+        }else {
             stamp = viewModel.getStampById(id);
+        }
             if (stamp == null) {
                 Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
             } else {
@@ -300,8 +329,27 @@ public class DetailStamp extends AppCompatActivity implements LoaderManager.Load
                 }
                 applyDetail();  //применить детальную информацию на экран
                 textViewNumRecord.setText("№ " + currentNum + " из " + recordsNum);
-            }
         }
+    }
+
+    public void setColorHeart() {
+        favouriteStamp = viewModel.getFavouriteStampByIdStamp(stamp.getIdStamp());   //получение марки  по ID марки в таблице избранного
+        if (favouriteStamp == null) {                                 //устанавливаем сердце
+            imageViewHeart.setImageResource(R.drawable.grayheart);
+        } else {
+            imageViewHeart.setImageResource(R.drawable.redheart);
+        }
+    }
+
+    public void onClickChangeFavourite(View view) {
+        if (favouriteStamp == null) {                 //проверяем, что в избранном нет такого
+            viewModel.insertFavouriteStamp(new FavouriteStamp(stamp));     //сохраняем movie в таблицу favourite_movie (ПРЕОБРАЗОВАНИЕ ТИПОВ ЧЕРЕЗ КОНСТРУКТОР) !ь
+            Toast.makeText(this, "Добавлено в избранное", Toast.LENGTH_SHORT).show();
+        } else {   //Если существует в таблице, то удаляем его из избранного
+            viewModel.deleteFavouriteStamp(favouriteStamp);
+            Toast.makeText(this, "Удалено из избранного", Toast.LENGTH_SHORT).show();
+        }
+        setColorHeart();
     }
 
 }

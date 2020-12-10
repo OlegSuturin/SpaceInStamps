@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Stamp.class, ImageUrl.class}, version = 6, exportSchema = false)
+@Database(entities = {Stamp.class, ImageUrl.class, FavouriteStamp.class}, version = 11, exportSchema = false)
 public abstract class StampDatabase extends RoomDatabase {
     private static StampDatabase database;
     private static final String DB_NAME = "stamp.db";

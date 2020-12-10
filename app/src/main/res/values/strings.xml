@@ -2,6 +2,8 @@
     <string name="app_name">SpaceInStamps</string>
     <string name="left"><![CDATA[<<]]></string>
     <string name="right"><![CDATA[>>]]></string>
+    <string name="item_menu_main">Главная</string>
+    <string name="item_menu_favourite">Избранное</string>
     <string-array name="themes_array_string">
         <item>Космос</item>
         <item>Флора</item>

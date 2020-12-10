@@ -75,6 +75,28 @@ public class Stamp{
         this.specifications = specifications;
         this.bigPhotoPath = bigPhotoPath;
     }
+    @Ignore
+    public Stamp(int idStamp, String theme, String country, int year, String dateRelease, String name, String overview, String specifications, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String catalogNumberScott, String catalogNumberCgib, String price, String photoPath, String bigPhotoPath, String detailUrl, boolean flag) {
+        this.idStamp = idStamp;
+        this.theme = theme;
+        this.country = country;
+        this.year = year;
+        this.dateRelease = dateRelease;
+        this.name = name;
+        this.overview = overview;
+        this.specifications = specifications;
+        this.quantity = quantity;
+        this.catalogNumberITC = catalogNumberITC;
+        this.catalogNumberSK = catalogNumberSK;
+        this.catalogNumberMich = catalogNumberMich;
+        this.catalogNumberScott = catalogNumberScott;
+        this.catalogNumberCgib = catalogNumberCgib;
+        this.price = price;
+        this.photoPath = photoPath;
+        this.bigPhotoPath = bigPhotoPath;
+        this.detailUrl = detailUrl;
+        this.flag = flag;
+    }
 
     public void setId(long id) {
         this.id = id;

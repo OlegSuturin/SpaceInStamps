@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
@@ -47,12 +50,33 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private LiveData<List<Stamp>> stampsFromLiveData;
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int idMenu = item.getItemId();
+        switch (idMenu) {
+            case R.id.itemMain:
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.itemFavourite:
+                Intent intentToFavourite = new Intent(this  , FavouriteActivity.class);
+                startActivity(intentToFavourite);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (data != null && data.hasExtra("page")){
+        if (data != null && data.hasExtra("page")) {
             int page = data.getIntExtra("page", -1);
             Toast.makeText(this, "" + page, Toast.LENGTH_SHORT).show();
             pageG = page;
@@ -101,12 +125,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 // Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
                 int positionTheme = spinnerThemeSelect.getSelectedItemPosition();
                 Stamp stamp = adapter.getStamps().get(position);
-                Intent intent = new Intent(MainActivity.this, DetailStamp.class);
+                Intent intent = new Intent(MainActivity.this, DetailStampActivity.class);
                 intent.putExtra("id", stamp.getId());
+                intent.putExtra("idStamp", stamp.getIdStamp());
                 intent.putExtra("recordsNum", recordsNumberG);
                 intent.putExtra("currentNum", position + 1);
                 intent.putExtra("page", pageG);
                 intent.putExtra("positionTheme", positionTheme);
+                intent.putExtra("favouriteTag", false );
                 startActivityForResult(intent, RESULT_FIRST_USER);
 
             }
@@ -173,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (pageG == 1) {
             adapter.clearStamps();
             viewModel.deleteAllStamps();
-            viewModel.deleteAllImageUrlTask();
+           // viewModel.deleteAllImageUrlTask();
             recordsNumberG = NetworkUtils.parserRecordsNumber(data);
             Toast.makeText(MainActivity.this, "Всего найдено: " + recordsNumberG, Toast.LENGTH_SHORT).show();
         }
