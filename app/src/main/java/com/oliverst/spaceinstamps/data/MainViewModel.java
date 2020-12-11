@@ -15,6 +15,7 @@ public class MainViewModel extends AndroidViewModel {
     private LiveData<List<Stamp>> stampsLiveData;    //объект LiveData для хранения всех записей
     private LiveData<List<ImageUrl>> imagesUrlLiveData;
     private LiveData<List<FavouriteStamp>> favouriteStampsLiveData;
+    private LiveData<List<FavouriteImageURL>> favouriteImagesUrlLiveData;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -36,6 +37,9 @@ public class MainViewModel extends AndroidViewModel {
         return favouriteStampsLiveData;
     }
 
+    public LiveData<List<FavouriteImageURL>> getFavouriteImagesUrlLiveData() {
+        return favouriteImagesUrlLiveData;
+    }
     // МЕТОДЫ работы с БД - таблица favourite_stamp (таб. stamps - в отдельных потоках , для каждого создан класс Task
 
     public void insertFavouriteStamp(FavouriteStamp favouriteStamp) {
@@ -177,6 +181,71 @@ public class MainViewModel extends AndroidViewModel {
                 return database.stampDao().getItemCountFavouriteStamps();
             }
         }
+
+    // МЕТОДЫ работы с БД - таблица favourite_images_url (таб. stamps - в отдельных потоках , для каждого создан класс Task
+
+    public void insertFavouriteImageUrl(FavouriteImageURL favouriteImageURL) {
+        new InsertFavouriteUrlTask().execute(favouriteImageURL);
+    }
+
+    private static class InsertFavouriteUrlTask extends AsyncTask<FavouriteImageURL, Void, Void> {
+        @Override
+        protected Void doInBackground(FavouriteImageURL... favouriteImageURLS) {
+            if (favouriteImageURLS != null && favouriteImageURLS.length > 0) {
+                database.stampDao().insertFavouriteImageUrl(favouriteImageURLS[0]);
+            }
+            return null;
+        }
+    }
+
+    public void deleteAllFavouriteImageUrlTask() {
+        new DeleteAllFavouriteUrlTask().execute();
+    }
+
+    private static class DeleteAllFavouriteUrlTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            database.stampDao().deleteAllFavouriteImagesUrl();
+            return null;
+        }
+    }
+
+    public List<FavouriteImageURL> getFavouriteImagesUrlById(int idStamp) {
+        try {
+            return new GetFavouriteUrlByIdTask().execute(idStamp).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static class GetFavouriteUrlByIdTask extends AsyncTask<Integer, Void, List<FavouriteImageURL>> {       //первый параметр - принимает, последний - возвращает
+        @Override
+        protected List<FavouriteImageURL> doInBackground(Integer... integers) {
+            if (integers != null && integers.length > 0) {
+                return database.stampDao().getFavouriteImagesUrlById(integers[0]);   // возвращаем результат
+            }
+            return null;
+        }
+    }
+
+
+    public void deleteFavouriteImagesUrlById(int idStamp) {
+            new deleteFavouriteUrlByIdTask().execute(idStamp);
+    }
+
+    private static class deleteFavouriteUrlByIdTask extends AsyncTask<Integer, Void, Void> {       //первый параметр - принимает, последний - возвращает
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            if (integers != null && integers.length > 0) {
+                database.stampDao().deleteFavouriteImagesUrlById(integers[0]);   // возвращаем результат
+            }
+            return null;
+        }
+    }
+
 
 //---------------------------------------------------------------------------------------
 

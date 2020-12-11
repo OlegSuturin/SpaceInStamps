@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case R.id.itemFavourite:
                 Intent intentToFavourite = new Intent(this  , FavouriteActivity.class);
                 startActivity(intentToFavourite);
+              //  startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (pageG == 1) {
             adapter.clearStamps();
             viewModel.deleteAllStamps();
-           // viewModel.deleteAllImageUrlTask();
+            viewModel.deleteAllImageUrlTask();
             recordsNumberG = NetworkUtils.parserRecordsNumber(data);
             Toast.makeText(MainActivity.this, "Всего найдено: " + recordsNumberG, Toast.LENGTH_SHORT).show();
         }

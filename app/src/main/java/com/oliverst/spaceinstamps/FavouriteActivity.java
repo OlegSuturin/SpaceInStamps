@@ -1,6 +1,7 @@
 package com.oliverst.spaceinstamps;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.oliverst.spaceinstamps.adapters.StampAdapter;
 import com.oliverst.spaceinstamps.data.FavouriteStamp;
@@ -29,6 +31,8 @@ public class FavouriteActivity extends AppCompatActivity {
 
     private LiveData<List<FavouriteStamp>> stampsFavouriteLD;
 
+
+//------------------------------------------------menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -47,9 +51,21 @@ public class FavouriteActivity extends AppCompatActivity {
             case R.id.itemFavourite:
                 Intent intentToFavourite = new Intent(this  , FavouriteActivity.class);
                 startActivity(intentToFavourite);
+               // startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
         }
         return super.onOptionsItemSelected(item);
     }
+//-------------------------------------------------------------
+@Override
+protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    List<FavouriteStamp> stamps = stampsFavouriteLD.getValue();
+    ArrayList<Stamp> favouriteStamps = new ArrayList<>();
+    favouriteStamps.addAll(stamps);
+    adapter.setStamps(favouriteStamps);
+    adapter.notifyDataSetChanged();
+    Toast.makeText(this, "Возврат", Toast.LENGTH_SHORT).show();
+}
 
 
     @Override

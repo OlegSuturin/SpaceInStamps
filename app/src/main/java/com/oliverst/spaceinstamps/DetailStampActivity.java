@@ -3,6 +3,8 @@ package com.oliverst.spaceinstamps;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
@@ -10,9 +12,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -20,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oliverst.spaceinstamps.adapters.ImagesAdapter;
+import com.oliverst.spaceinstamps.data.FavouriteImageURL;
 import com.oliverst.spaceinstamps.data.FavouriteStamp;
 import com.oliverst.spaceinstamps.data.ImageUrl;
 import com.oliverst.spaceinstamps.data.MainViewModel;
@@ -66,17 +73,52 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     private LoaderManager loaderManager;      //  - менеджер загрузок
     private ProgressBar progressBarLoadingOnDetail;
 
+  // private LiveData<List<Stamp>> stampsLD;
+
+ //  private List<Stamp> stamps;
+
+  private LiveData<List<FavouriteStamp>> favouriteStampsLD;
+ //  private List<FavouriteStamp> favouriteStamps;
+
     @Override
     public void onBackPressed() {
+        if(favouriteTag){
+            Intent intent = new Intent(DetailStampActivity.this, FavouriteActivity.class);
+            startActivity(intent);
+        }else{
+            Intent intent = new Intent(DetailStampActivity.this, MainActivity.class);
+            intent.putExtra("page", page);
+            setResult(RESULT_OK, intent);
+        }
 
-       // Log.i("!@#", "onBackPressed");
-        Intent intent = new Intent(DetailStampActivity.this, MainActivity.class);
-        intent.putExtra("page", page);
-        setResult(RESULT_OK, intent);
+
 
         super.onBackPressed();
     }
 
+    //------------------------------------------------menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int idMenu = item.getItemId();
+        switch (idMenu) {
+            case R.id.itemMain:
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.itemFavourite:
+                Intent intentToFavourite = new Intent(this  , FavouriteActivity.class);
+                startActivity(intentToFavourite);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+//-------------------------------------------------------------
 
     //----------------------------------loader-------------------------------------
     @NonNull
@@ -141,6 +183,9 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_stamp);
 
+        List<Stamp> stamps = new ArrayList<>();
+        List<FavouriteStamp> favouriteStamps = new ArrayList<>();
+
         textViewCountryInfo = findViewById(R.id.textViewCountryInfo);
         textViewYearInfo = findViewById(R.id.textViewYearInfo);
         textViewNameInfo = findViewById(R.id.textViewNameInfo);
@@ -168,7 +213,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             page = intent.getIntExtra("page", -1);
             positionTheme = intent.getIntExtra("positionTheme", -1);
             favouriteTag = intent.getBooleanExtra("favouriteTag", false);
-
+            Toast.makeText(this, "FT: " + favouriteTag, Toast.LENGTH_SHORT).show();
         } else {
             finish();               //  закрываем активность, если что то не так
         }
@@ -179,6 +224,22 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         if(favouriteTag){
             stamp = viewModel.getFavouriteStampByIdStamp(idStamp);
             id = stamp.getId();
+
+            favouriteStampsLD  = viewModel.getFavouriteStampsLiveData();
+
+            favouriteStampsLD.observe(this, new Observer<List<FavouriteStamp>>() {
+                @Override
+                public void onChanged(List<FavouriteStamp> fStamps) {
+                    if(fStamps!=null){
+                       // stamps.clear();
+                       // stamps.addAll(fStamps);
+                        recordsNum = fStamps.size();
+                    }
+                }
+            });
+          //  List<FavouriteStamp> favouriteStampList = favouriteStampsLD.getValue();
+          //  stamps.addAll(favouriteStampList);
+
         }else {
             stamp = viewModel.getStampByIdStamp(idStamp);
         }
@@ -274,7 +335,14 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         String catalogNumbers = String.format("ИТС: %s СК: %s Михель: %s", stamp.getCatalogNumberITC(), stamp.getCatalogNumberSK(), stamp.getCatalogNumberMich());
         textViewCatalogNumbersInfo.setText(catalogNumbers);
 
-        List<ImageUrl> imagesUrl = viewModel.getImagesUrlById(stamp.getIdStamp());
+        List<ImageUrl> imagesUrl = new ArrayList<>();
+        if(favouriteTag){
+            List<FavouriteImageURL> favouriteImagesUrl = viewModel.getFavouriteImagesUrlById(stamp.getIdStamp());
+            imagesUrl.addAll(favouriteImagesUrl);
+        }else{
+            imagesUrl = viewModel.getImagesUrlById(stamp.getIdStamp());
+        }
+
 
         //Log.i("!@#", imagesUrl.get(0).getUrl());
 
@@ -290,7 +358,9 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             currentNum--;
         }
         if(favouriteTag){
-           stamp = viewModel.getFavouriteStampById(id);
+           //stamp = viewModel.getFavouriteStampById(id);
+            List<FavouriteStamp> stamps = favouriteStampsLD.getValue();
+            stamp = stamps.get(currentNum-1);
         }else {
             stamp = viewModel.getStampById(id);
         }
@@ -317,7 +387,11 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             currentNum++;
         }
         if(favouriteTag){
-            stamp = viewModel.getFavouriteStampById(id);
+          // stamp = viewModel.getFavouriteStampById(id);
+           List<FavouriteStamp> stamps = favouriteStampsLD.getValue();
+           stamp = stamps.get(currentNum-1);
+          //  Toast.makeText(this, ""+stamps.size(), Toast.LENGTH_SHORT).show();
+
         }else {
             stamp = viewModel.getStampById(id);
         }
@@ -343,10 +417,21 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
 
     public void onClickChangeFavourite(View view) {
         if (favouriteStamp == null) {                 //проверяем, что в избранном нет такого
-            viewModel.insertFavouriteStamp(new FavouriteStamp(stamp));     //сохраняем movie в таблицу favourite_movie (ПРЕОБРАЗОВАНИЕ ТИПОВ ЧЕРЕЗ КОНСТРУКТОР) !ь
+            viewModel.insertFavouriteStamp(new FavouriteStamp(stamp));     //сохраняем movie в таблицу favourite_movie (ПРЕОБРАЗОВАНИЕ ТИПОВ ЧЕРЕЗ КОНСТРУКТОР)
+
+                List<ImageUrl> imagesUrl = viewModel.getImagesUrlById(stamp.getIdStamp());             //сохраняем соответств. url картинок в избранное
+            for (int i = 0; i < imagesUrl.size(); i++) {
+                FavouriteImageURL favouriteImageURL = new FavouriteImageURL(imagesUrl.get(i));
+                // Log.i("!@#", imageUrl.getUrl());
+                viewModel.insertFavouriteImageUrl(favouriteImageURL);
+                 }
+
             Toast.makeText(this, "Добавлено в избранное", Toast.LENGTH_SHORT).show();
         } else {   //Если существует в таблице, то удаляем его из избранного
             viewModel.deleteFavouriteStamp(favouriteStamp);
+                                 //здесь нужно удалять так же все его ImageURL избранное !!!
+            viewModel.deleteFavouriteImagesUrlById(favouriteStamp.getIdStamp());
+
             Toast.makeText(this, "Удалено из избранного", Toast.LENGTH_SHORT).show();
         }
         setColorHeart();

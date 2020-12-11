@@ -70,4 +70,22 @@ public interface StampDao {
 
     @Query("DELETE FROM images_url")
     void  deleteAllImagesUrl();
+
+// таблица favourite_images_url
+
+    @Query("SELECT * FROM favourite_images_url")
+    LiveData<List<FavouriteImageURL>> getAllFavouriteImagesUrl();
+
+    @Query("SELECT * FROM favourite_images_url WHERE idStamp == :id")
+    List<FavouriteImageURL> getFavouriteImagesUrlById(int id);
+
+    @Insert
+    void insertFavouriteImageUrl(FavouriteImageURL favouriteImageURL);
+
+    @Query("DELETE FROM favourite_images_url")
+    void  deleteAllFavouriteImagesUrl();
+
+    @Query("DELETE FROM favourite_images_url WHERE idStamp == :id")
+    void deleteFavouriteImagesUrlById(int id);
+
 }
