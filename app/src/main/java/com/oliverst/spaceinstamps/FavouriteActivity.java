@@ -2,6 +2,7 @@ package com.oliverst.spaceinstamps;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -72,6 +73,11 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite);
+
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.setTitle("Избранное");
+        }
 
         recyclerViewTitle = findViewById(R.id.recyclerViewTitle);
         adapter = new StampAdapter();

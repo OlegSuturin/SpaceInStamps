@@ -20,4 +20,8 @@
         <item>Авиация</item>
         <item>Корабли, флот</item>
     </string-array>
+    <string-array name="year_array_string">
+    <item>1961</item>
+    <item>1962</item>
+    </string-array>
 </resources>
