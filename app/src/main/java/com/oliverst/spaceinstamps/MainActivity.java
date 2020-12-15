@@ -13,13 +13,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.GetChars;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
@@ -36,12 +34,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
-    public static final int SORT_BY_THEME = 0;
-    public static final int SORT_BY_YEAR = 1;
+    private static int methodOfSort = 1;
+    public static final int SORT_BY_THEME = 1;
+    public static final int SORT_BY_YEAR = 2;
 
     private static final int YEAR_START = 1961;
     private static final int YEAR_END = 1991;
     private Spinner spinnerYearSelect;
+    private static boolean flagNoInitYear = false;
+    private int year;
 
     private StampAdapter adapter;
     private RecyclerView recyclerViewTitle;
@@ -56,10 +57,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private LoaderManager loaderManager;      //  - менеджер загрузок
     private ProgressBar progressBarLoading;
     private MainViewModel viewModel;
-    private int recordsNumberG;             //кол-во записей найдено
+    private static int recordsNumberG;             //кол-во записей найдено
 
     private LiveData<List<Stamp>> stampsFromLiveData;
-//--------------------------------menu---------------------------------------------
+
+    //--------------------------------menu---------------------------------------------
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -76,13 +78,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(intent);
                 break;
             case R.id.itemFavourite:
-                Intent intentToFavourite = new Intent(this  , FavouriteActivity.class);
+                Intent intentToFavourite = new Intent(this, FavouriteActivity.class);
                 startActivity(intentToFavourite);
-              //  startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
+                //  startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
         }
         return super.onOptionsItemSelected(item);
     }
-//-----------------------------------------------------------------------------------------------
+
+    //-----------------------------------------------------------------------------------------------
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -105,7 +108,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         progressBarLoading = findViewById(R.id.progressBarLoading);
         spinnerYearSelect = findViewById(R.id.spinnerYearSelect);
 
-        initSpinnerYearSelect(YEAR_START,YEAR_END);
+        initSpinnerYearSelect(YEAR_START, YEAR_END);
+
+
 
         adapter = new StampAdapter();
         recyclerViewTitle.setLayoutManager(new LinearLayoutManager(this));
@@ -118,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         AdapterView.OnItemSelectedListener onItemSelectedThemeListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                methodOfSort = SORT_BY_THEME;
                 theme = (String) parent.getSelectedItem();
                 pageG = 1;
                 recordsNumberG = 0;
@@ -125,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     downLoadData(position);
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -136,7 +141,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         AdapterView.OnItemSelectedListener onItemSelectedYearListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("!@#", "p:"+position);
+                if (flagNoInitYear) {
+                    methodOfSort = SORT_BY_YEAR;
+                    year = Integer.parseInt((String) parent.getSelectedItem());
+                    pageG = 1;
+                    recordsNumberG = 0;
+                   // Log.i("!@#", "y:" + year);
+                    if (!isLoading) {   //если процесс загрузки не идет
+                        downLoadData(year);
+                    }
+                }
+                flagNoInitYear = true;
             }
 
             @Override
@@ -144,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         };
         spinnerYearSelect.setOnItemSelectedListener(onItemSelectedYearListener);
+
 
         //слушатель клика на элемент рецайклера
         adapter.setOnStampClickListener(new StampAdapter.OnStampClickListener() {
@@ -159,7 +175,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 intent.putExtra("currentNum", position + 1);
                 intent.putExtra("page", pageG);
                 intent.putExtra("positionTheme", positionTheme);
-                intent.putExtra("favouriteTag", false );
+                intent.putExtra("favouriteTag", false);
+                intent.putExtra("methodOfSort", methodOfSort);
+                intent.putExtra("year", year);
                 startActivityForResult(intent, RESULT_FIRST_USER);
 
             }
@@ -171,8 +189,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 // Toast.makeText(MainActivity.this, "конец списка page =" + pageG, Toast.LENGTH_SHORT).show();
                 if (!isLoading) {   //если процесс загрузки не идет
-                    int position = spinnerThemeSelect.getSelectedItemPosition();
-                    downLoadData(position);
+                 //  methodOfSort = SORT_BY_THEME;
+                    switch (methodOfSort) {
+                        case SORT_BY_THEME:
+                            int position = spinnerThemeSelect.getSelectedItemPosition();
+                            downLoadData(position);
+                            break;
+                        case SORT_BY_YEAR:
+                             year = Integer.parseInt((String) spinnerYearSelect.getSelectedItem());
+                            downLoadData(year);
+                            break;
+                    }
                     // Toast.makeText(MainActivity.this, "pageG: "+ pageG, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -184,17 +211,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 adapter.setStamps(stamps);
             }
         });
-
+       // methodOfSort = SORT_BY_THEME;
 
     }//end of onCreate
 
     private void downLoadData(int position) {
-
-        URL url = NetworkUtils.buildURL(position, pageG);
         Bundle bundle = new Bundle();
+        URL url = null;
+        switch (methodOfSort){
+            case SORT_BY_THEME:
+                url = NetworkUtils.buildURL(position, pageG);
+                break;
+            case SORT_BY_YEAR:
+                url = NetworkUtils.buildURLByYear(position, pageG);
+                break;
+        }//end of case
         bundle.putString("url", url.toString());
         loaderManager.restartLoader(LOADER_ID, bundle, this);   //запускаем загрузчик
-
     }
 
     //------------------------------------------loader------------------------------
@@ -210,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 isLoading = true;         //загрузка началась
             }
         });
-       return dataLoader;
+        return dataLoader;
     }
 
     @Override   //в этом методе получаем данные по окончании работы загрузчика
@@ -249,13 +282,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 //-------------------------------------------------------------------------
 
-   public void initSpinnerYearSelect(int yearStart, int yearEnd){
+    public void initSpinnerYearSelect(int yearStart, int yearEnd) {
         ArrayList<String> years = new ArrayList<>();
-        for(int i = yearStart; i<=yearEnd; i++){
+        for (int i = yearStart; i <= yearEnd; i++) {
             years.add(Integer.toString(i));
         }
-       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, years);
-      // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, years);
+        // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerYearSelect.setAdapter(adapter);
     }
 

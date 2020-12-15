@@ -45,6 +45,8 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     private int page;
     private int positionTheme;
     private boolean favouriteTag;
+    private int methodOfSort;
+    private int year;
 
     private TextView textViewCountryInfo;
     private TextView textViewYearInfo;
@@ -159,7 +161,16 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
 
     //-------------------------------------------------------------------------------------------
     private void downLoadData() {
-        URL url = NetworkUtils.buildURL(positionTheme, page);
+        URL url = null;
+        switch (methodOfSort){
+            case MainActivity.SORT_BY_THEME:
+                url = NetworkUtils.buildURL(positionTheme, page);
+                break;
+            case MainActivity.SORT_BY_YEAR:
+                url = NetworkUtils.buildURLByYear(year, page);
+                break;
+        }
+
         Bundle bundle = new Bundle();
         bundle.putString("url", url.toString());
         loaderManager.restartLoader(LOADER_ID, bundle, this);   //запускаем загрузчик
@@ -185,7 +196,8 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         outState.putInt("page", page);
         outState.putInt("positionTheme", positionTheme);
         outState.putBoolean("favouriteTag", favouriteTag);
-
+        outState.putInt("methodOfSort",methodOfSort);
+        outState.putInt("year",year);
         super.onSaveInstanceState(outState);
     }
 
@@ -225,6 +237,8 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             page = intent.getIntExtra("page", -1);
             positionTheme = intent.getIntExtra("positionTheme", -1);
             favouriteTag = intent.getBooleanExtra("favouriteTag", false);
+            methodOfSort = intent.getIntExtra("methodOfSort", -1);
+            year = intent.getIntExtra("year", -1);
             Toast.makeText(this, "FT: " + favouriteTag, Toast.LENGTH_SHORT).show();
         } else {
             finish();               //  закрываем активность, если что то не так
@@ -238,6 +252,8 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             page = savedInstanceState.getInt("page");
             positionTheme = savedInstanceState.getInt("positionTheme");
             favouriteTag = savedInstanceState.getBoolean("favouriteTag");
+            methodOfSort = savedInstanceState.getInt("methodOfSort");
+            year = savedInstanceState.getInt("year");
         }
 
         loaderManager = LoaderManager.getInstance(this);
@@ -384,6 +400,8 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         if (currentNum > 1) {
             id--;
             currentNum--;
+        }else{
+            Toast.makeText(this, "Начало списка", Toast.LENGTH_SHORT).show();
         }
         if (favouriteTag) {
             //stamp = viewModel.getFavouriteStampById(id);
@@ -413,6 +431,8 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         if (currentNum < recordsNum) {
             id++;
             currentNum++;
+        }else{
+            Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT).show();
         }
         if (favouriteTag) {
             // stamp = viewModel.getFavouriteStampById(id);

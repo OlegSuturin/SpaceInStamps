@@ -29,6 +29,7 @@ public class NetworkUtils {
 
     private static final String baseUrl = "http://www.philately.ru";
     private static final String searshBaseUrl = "http://www.philately.ru/cgi-bin/sql/search2.cgi?&action=search&tag=%s&page=%s";
+    private static final String searchBaseUrlByYear = "http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&year=%s&page=%s";
     //  http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=%%C0%E2%E8%E0&cat_name=&page=2&lang=&keyword=
 
     public static final int COSMOS = 0;         //Космос
@@ -278,7 +279,7 @@ public class NetworkUtils {
             return imagesUrl;
     }
 
-    //МЕТОД, ФОРМИРУЕТ СТРОКУ ЗАПРОСА URL
+    //МЕТОД, ФОРМИРУЕТ СТРОКУ ЗАПРОСА URL - по теме
     public static URL buildURL(int themeNumber, int page) {
         String urlString;
         URL urlResult = null;
@@ -338,6 +339,23 @@ public class NetworkUtils {
         }
         return urlResult;
     }
+
+    //МЕТОД, ФОРМИРУЕТ СТРОКУ ЗАПРОСА URL - по году
+
+    public static URL buildURLByYear(int year, int page) {
+        String urlString;
+        URL urlResult = null;
+
+        urlString = String.format(searchBaseUrlByYear, year, page);
+        //urlString = String.format("http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=&cat_name=&page=%s&lang=&keyword=", page);
+        try {
+            urlResult = new URL(urlString);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return urlResult;
+    }
+
 
     //----------------------------------------метод и класс заменены лоадером------------------------------------------------
     public static String getStampsFromNetwork(int themeNumber, int page) {
