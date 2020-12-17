@@ -47,6 +47,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     private boolean favouriteTag;
     private int methodOfSort;
     private int year;
+    private String keyword;
 
     private TextView textViewCountryInfo;
     private TextView textViewYearInfo;
@@ -162,18 +163,23 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     //-------------------------------------------------------------------------------------------
     private void downLoadData() {
         URL url = null;
-        switch (methodOfSort){
+        switch (methodOfSort) {
             case MainActivity.SORT_BY_THEME:
                 url = NetworkUtils.buildURL(positionTheme, page);
                 break;
             case MainActivity.SORT_BY_YEAR:
                 url = NetworkUtils.buildURLByYear(year, page);
                 break;
+            case MainActivity.SORT_BY_KEYWORD:
+                url = NetworkUtils.buildURLByKeyword(keyword, page);
+                break;
         }
 
         Bundle bundle = new Bundle();
-        bundle.putString("url", url.toString());
-        loaderManager.restartLoader(LOADER_ID, bundle, this);   //запускаем загрузчик
+        if (url != null) {
+            bundle.putString("url", url.toString());
+            loaderManager.restartLoader(LOADER_ID, bundle, this);   //запускаем загрузчик
+        }
     }
 
 
@@ -196,8 +202,9 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         outState.putInt("page", page);
         outState.putInt("positionTheme", positionTheme);
         outState.putBoolean("favouriteTag", favouriteTag);
-        outState.putInt("methodOfSort",methodOfSort);
-        outState.putInt("year",year);
+        outState.putInt("methodOfSort", methodOfSort);
+        outState.putInt("year", year);
+        outState.putString("keyword", keyword);
         super.onSaveInstanceState(outState);
     }
 
@@ -239,6 +246,8 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             favouriteTag = intent.getBooleanExtra("favouriteTag", false);
             methodOfSort = intent.getIntExtra("methodOfSort", -1);
             year = intent.getIntExtra("year", -1);
+            keyword = intent.getStringExtra("keyword");
+
             Toast.makeText(this, "FT: " + favouriteTag, Toast.LENGTH_SHORT).show();
         } else {
             finish();               //  закрываем активность, если что то не так
@@ -254,6 +263,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             favouriteTag = savedInstanceState.getBoolean("favouriteTag");
             methodOfSort = savedInstanceState.getInt("methodOfSort");
             year = savedInstanceState.getInt("year");
+            keyword = savedInstanceState.getString("keyword");
         }
 
         loaderManager = LoaderManager.getInstance(this);
@@ -386,8 +396,14 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         } else {
             imagesUrl = viewModel.getImagesUrlById(stamp.getIdStamp());
         }
+        int number = imagesUrl.size();
+        if (number > 1) {
+            textViewNumberOfPics.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+        }else {
+            textViewNumberOfPics.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        }
 
-        textViewNumberOfPics.setText(":" + imagesUrl.size());
+        textViewNumberOfPics.setText(" " + number + ":");
         //Log.i("!@#", imagesUrl.get(0).getUrl());
 
         recyclerViewImagesInfo.setLayoutManager(new LinearLayoutManager(this));
@@ -400,7 +416,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         if (currentNum > 1) {
             id--;
             currentNum--;
-        }else{
+        } else {
             Toast.makeText(this, "Начало списка", Toast.LENGTH_SHORT).show();
         }
         if (favouriteTag) {
@@ -424,14 +440,14 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
 
 
     public void onClickRight(View view) {
-        if (onReachEndListener != null && currentNum == viewModel.getItemCountStamps() - 10) {
+        if (onReachEndListener != null && currentNum == viewModel.getItemCountStamps() - 10 && recordsNum >= 100) {
             onReachEndListener.onReachEnd();
         }
 
         if (currentNum < recordsNum) {
             id++;
             currentNum++;
-        }else{
+        } else {
             Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT).show();
         }
         if (favouriteTag) {

@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="8dp">
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineCenter"
@@ -274,23 +273,54 @@
     <TextView
         android:id="@+id/textViewLabelOverview"
         style="@style/LabelStyle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="Описание:"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewSpecificationsInfo" />
 
     <TextView
         android:id="@+id/textViewOverviewInfo"
         style="@style/TextDataStyle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginRight="8dp"
+        android:layout_margin="8dp"
         android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewLabelOverview"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSpecificationsInfo" />
+
+    <View
+        style="@style/LineStyle"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_margin="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewLabelOverview" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewOverviewInfo" />
+
+
+        <ImageView
+            android:id="@+id/imageViewPics"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewOverviewInfo"
+            app:srcCompat="@drawable/pics"
+            android:layout_margin="8dp"/>
+
+        <TextView
+            style="@style/TextDataStyle"
+            android:id="@+id/textViewNumberOfPics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="TextView"
+            android:layout_margin="8dp"
+            app:layout_constraintStart_toEndOf="@+id/imageViewPics"
+            app:layout_constraintTop_toBottomOf="@+id/textViewOverviewInfo" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

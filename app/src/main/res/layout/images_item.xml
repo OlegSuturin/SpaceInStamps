@@ -13,7 +13,7 @@
         android:adjustViewBounds="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewLupa"
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
@@ -21,9 +21,9 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_margin="4dp"
-        app:srcCompat="@drawable/lupa"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/lupa" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,9 +16,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -30,6 +32,7 @@ public class NetworkUtils {
     private static final String baseUrl = "http://www.philately.ru";
     private static final String searshBaseUrl = "http://www.philately.ru/cgi-bin/sql/search2.cgi?&action=search&tag=%s&page=%s";
     private static final String searchBaseUrlByYear = "http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&year=%s&page=%s";
+    private static final String searchBaseUrlByKeyword = "http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=&cat_name=catalogue&lang=&keyword=%s&page=%s";
     //  http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=%%C0%E2%E8%E0&cat_name=&page=2&lang=&keyword=
 
     public static final int COSMOS = 0;         //Космос
@@ -72,7 +75,11 @@ public class NetworkUtils {
         while (matcher.find()) {
             result = matcher.group(1);
         }
-        return Integer.parseInt(result);
+        if (!result.isEmpty()) {
+            return Integer.parseInt(result);
+        }else{
+            return 0;
+        }
     }
 
     public static ArrayList<Stamp> parserTitlesStamp(String data) {
@@ -331,7 +338,6 @@ public class NetworkUtils {
             default:
                 urlString = "";
         }
-        //Log.i("!@#", urlString);
         try {
             urlResult = new URL(urlString);
         } catch (MalformedURLException e) {
@@ -356,6 +362,22 @@ public class NetworkUtils {
         return urlResult;
     }
 
+    //МЕТОД, ФОРМИРУЕТ СТРОКУ ЗАПРОСА URL - по ключевому слову
+
+    public static URL buildURLByKeyword(String keyword, int page){
+        String urlString;
+        URL urlResult = null;
+        try {
+            String encodeKeyword = URLEncoder.encode(keyword, "windows-1251");
+            urlString = String.format(searchBaseUrlByKeyword, encodeKeyword, page);
+            urlResult = new URL(urlString);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return urlResult;
+    }
 
     //----------------------------------------метод и класс заменены лоадером------------------------------------------------
     public static String getStampsFromNetwork(int themeNumber, int page) {

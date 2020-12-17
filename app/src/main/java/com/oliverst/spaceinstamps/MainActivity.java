@@ -20,8 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oliverst.spaceinstamps.adapters.StampAdapter;
@@ -37,6 +40,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static int methodOfSort = 1;
     public static final int SORT_BY_THEME = 1;
     public static final int SORT_BY_YEAR = 2;
+    public static final int SORT_BY_KEYWORD = 3;
+
+    private TextView textViewSortByTheme;
+    private TextView textViewSortByYear;
+    private TextView textViewSortByKeyword;
+
+    private EditText editTextSearchKeyword;
+    private ImageView imageViewSearchKeyword;
+    private static String keyword;
 
     private static final int YEAR_START = 1961;
     private static final int YEAR_END = 1991;
@@ -103,13 +115,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        textViewSortByTheme = findViewById(R.id.textViewSortByTheme);
+        textViewSortByYear = findViewById(R.id.textViewSortByYear);
+        textViewSortByKeyword = findViewById(R.id.textViewSortByKeyword);
+        editTextSearchKeyword = findViewById(R.id.editTextSearchKeyword);
+        imageViewSearchKeyword = findViewById(R.id.imageViewSearchKeyword);
+
         spinnerThemeSelect = findViewById(R.id.spinnerThemeSelect);
         recyclerViewTitle = findViewById(R.id.recyclerViewTitle);
         progressBarLoading = findViewById(R.id.progressBarLoading);
         spinnerYearSelect = findViewById(R.id.spinnerYearSelect);
 
-        initSpinnerYearSelect(YEAR_START, YEAR_END);
-
+        onClickSortByTheme(textViewSortByTheme);    //сортировка по умолчанию - По теме
 
 
         adapter = new StampAdapter();
@@ -131,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     downLoadData(position);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -146,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     year = Integer.parseInt((String) parent.getSelectedItem());
                     pageG = 1;
                     recordsNumberG = 0;
-                   // Log.i("!@#", "y:" + year);
+                    // Log.i("!@#", "y:" + year);
                     if (!isLoading) {   //если процесс загрузки не идет
                         downLoadData(year);
                     }
@@ -178,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 intent.putExtra("favouriteTag", false);
                 intent.putExtra("methodOfSort", methodOfSort);
                 intent.putExtra("year", year);
+                intent.putExtra("keyword", keyword);
                 startActivityForResult(intent, RESULT_FIRST_USER);
 
             }
@@ -189,15 +209,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 // Toast.makeText(MainActivity.this, "конец списка page =" + pageG, Toast.LENGTH_SHORT).show();
                 if (!isLoading) {   //если процесс загрузки не идет
-                 //  methodOfSort = SORT_BY_THEME;
+                    //  methodOfSort = SORT_BY_THEME;
                     switch (methodOfSort) {
                         case SORT_BY_THEME:
                             int position = spinnerThemeSelect.getSelectedItemPosition();
                             downLoadData(position);
                             break;
                         case SORT_BY_YEAR:
-                             year = Integer.parseInt((String) spinnerYearSelect.getSelectedItem());
+                            year = Integer.parseInt((String) spinnerYearSelect.getSelectedItem());
                             downLoadData(year);
+                            break;
+                        case SORT_BY_KEYWORD:
+                            keyword = editTextSearchKeyword.getText().toString();
+                            downLoadData(-1);
                             break;
                     }
                     // Toast.makeText(MainActivity.this, "pageG: "+ pageG, Toast.LENGTH_SHORT).show();
@@ -211,23 +235,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 adapter.setStamps(stamps);
             }
         });
-       // methodOfSort = SORT_BY_THEME;
+        // methodOfSort = SORT_BY_THEME;
 
     }//end of onCreate
 
     private void downLoadData(int position) {
         Bundle bundle = new Bundle();
         URL url = null;
-        switch (methodOfSort){
+        switch (methodOfSort) {
             case SORT_BY_THEME:
                 url = NetworkUtils.buildURL(position, pageG);
                 break;
             case SORT_BY_YEAR:
                 url = NetworkUtils.buildURLByYear(position, pageG);
                 break;
+            case SORT_BY_KEYWORD:
+                url = NetworkUtils.buildURLByKeyword(keyword, pageG);
+                // Toast.makeText(this, url.toString(), Toast.LENGTH_SHORT).show();
+                break;
         }//end of case
-        bundle.putString("url", url.toString());
-        loaderManager.restartLoader(LOADER_ID, bundle, this);   //запускаем загрузчик
+
+        if (url != null) {
+            bundle.putString("url", url.toString());
+            loaderManager.restartLoader(LOADER_ID, bundle, this);   //запускаем загрузчик
+        }
     }
 
     //------------------------------------------loader------------------------------
@@ -292,5 +323,77 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         spinnerYearSelect.setAdapter(adapter);
     }
 
+    public void initSpinnerThemeSelect() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.themes_array_string, android.R.layout.simple_spinner_item);
+        spinnerThemeSelect.setAdapter(adapter);
+    }
+
+
+    public void onClickSortByTheme(View view) {
+        textViewSortByTheme.setTextColor(getResources().getColor(R.color.black));
+        textViewSortByTheme.setBackgroundColor(getResources().getColor(R.color.gray_400));
+        textViewSortByYear.setTextColor(getResources().getColor(R.color.white));
+        textViewSortByYear.setBackgroundColor(getResources().getColor(R.color.black));
+        textViewSortByKeyword.setTextColor(getResources().getColor(R.color.white));
+        textViewSortByKeyword.setBackgroundColor(getResources().getColor(R.color.black));
+
+        spinnerThemeSelect.setVisibility(View.VISIBLE);
+        spinnerYearSelect.setVisibility(View.INVISIBLE);
+        editTextSearchKeyword.setVisibility(View.INVISIBLE);
+        imageViewSearchKeyword.setVisibility(View.INVISIBLE);
+
+        initSpinnerThemeSelect();
+    }
+
+    public void onClickSortByYear(View view) {
+        textViewSortByYear.setTextColor(getResources().getColor(R.color.black));
+        textViewSortByYear.setBackgroundColor(getResources().getColor(R.color.gray_400));
+        textViewSortByTheme.setTextColor(getResources().getColor(R.color.white));
+        textViewSortByTheme.setBackgroundColor(getResources().getColor(R.color.black));
+        textViewSortByKeyword.setTextColor(getResources().getColor(R.color.white));
+        textViewSortByKeyword.setBackgroundColor(getResources().getColor(R.color.black));
+
+        spinnerThemeSelect.setVisibility(View.INVISIBLE);
+        spinnerYearSelect.setVisibility(View.VISIBLE);
+        editTextSearchKeyword.setVisibility(View.INVISIBLE);
+        imageViewSearchKeyword.setVisibility(View.INVISIBLE);
+
+        initSpinnerYearSelect(YEAR_START, YEAR_END);
+    }
+
+    public void onClickSortByKeyword(View view) {
+        editTextSearchKeyword.setText("");
+        keyword="";
+        adapter.clearStamps();
+        viewModel.deleteAllStamps();
+        viewModel.deleteAllImageUrlTask();
+
+
+        textViewSortByKeyword.setTextColor(getResources().getColor(R.color.black));
+        textViewSortByKeyword.setBackgroundColor(getResources().getColor(R.color.gray_400));
+        textViewSortByYear.setTextColor(getResources().getColor(R.color.white));
+        textViewSortByYear.setBackgroundColor(getResources().getColor(R.color.black));
+        textViewSortByTheme.setTextColor(getResources().getColor(R.color.white));
+        textViewSortByTheme.setBackgroundColor(getResources().getColor(R.color.black));
+
+        spinnerThemeSelect.setVisibility(View.INVISIBLE);
+        spinnerYearSelect.setVisibility(View.INVISIBLE);
+        editTextSearchKeyword.setVisibility(View.VISIBLE);
+        imageViewSearchKeyword.setVisibility(View.VISIBLE);
+
+    }
+
+    public void onClickSearchKeyword(View view) {
+
+        keyword = editTextSearchKeyword.getText().toString();
+        if (!keyword.isEmpty()) {
+            methodOfSort = SORT_BY_KEYWORD;
+            pageG = 1;
+            recordsNumberG = 0;
+            if (!isLoading) {   //если процесс загрузки не идет
+                downLoadData(-1);
+            }
+        }
+    }
 
 }
