@@ -287,9 +287,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             viewModel.deleteAllStamps();
             viewModel.deleteAllImageUrlTask();
             recordsNumberG = NetworkUtils.parserRecordsNumber(data);
-            Toast.makeText(MainActivity.this, "Всего найдено: " + recordsNumberG, Toast.LENGTH_SHORT).show();
+            if (recordsNumberG < 0) {   //единичный результат
+                Toast.makeText(MainActivity.this, "Всего найдено: один", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Всего найдено: " + recordsNumberG, Toast.LENGTH_SHORT).show();
+            }
         }
-        ArrayList<Stamp> stamps = NetworkUtils.parserTitlesStamp(data);
+        ArrayList<Stamp> stamps = new ArrayList<>();
+        if (recordsNumberG < 0) {   //единичный результат
+            //код обработки единичной формы
+            Stamp stamp;
+            int idStamp = recordsNumberG * (-1);
+            stamp = NetworkUtils.parserTitlesSingleStamp(data, idStamp);
+                stamps.add(stamp);
+            recordsNumberG = 1;
+        } else {
+            stamps = NetworkUtils.parserTitlesStamp(data);
+        }
+
         if (stamps != null && !stamps.isEmpty()) {
 
             for (Stamp stamp : stamps) {
@@ -363,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public void onClickSortByKeyword(View view) {
         editTextSearchKeyword.setText("");
-        keyword="";
+        keyword = "";
         adapter.clearStamps();
         viewModel.deleteAllStamps();
         viewModel.deleteAllImageUrlTask();

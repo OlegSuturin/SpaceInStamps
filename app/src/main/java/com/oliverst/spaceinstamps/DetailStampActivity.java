@@ -363,6 +363,10 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         stamp.setDateRelease(stampDetail.getDateRelease());
         stamp.setOverview(stampDetail.getOverview());
         stamp.setSpecifications(stampDetail.getSpecifications());
+        stamp.setPrice(stampDetail.getPrice());
+        stamp.setCatalogNumberITC(stampDetail.getCatalogNumberITC());
+        stamp.setCatalogNumberSK(stampDetail.getCatalogNumberSK());
+        stamp.setCatalogNumberMich(stampDetail.getCatalogNumberMich());
 
         ArrayList<String> imagesUrlString = NetworkUtils.parseImagesUrl(data);
 

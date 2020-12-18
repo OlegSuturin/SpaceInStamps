@@ -54,7 +54,7 @@ public class Stamp{
     }
 
     @Ignore
-    public Stamp(int idStamp, int year, String name, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String price, String detailUrl) {
+    public Stamp(int idStamp, int year, String name, String quantity, String detailUrl) {
         this.idStamp = idStamp;
         this.year = year;
         this.name = name;
@@ -62,18 +62,21 @@ public class Stamp{
         this.catalogNumberITC = catalogNumberITC;
         this.catalogNumberSK = catalogNumberSK;
         this.catalogNumberMich = catalogNumberMich;
-        this.price = price;
         this.detailUrl = detailUrl;
 
         this.flag = false;
     }
     @Ignore
-    public Stamp(String country, String dateRelease, String overview, String specifications) {
+    public Stamp(String country, String dateRelease, String overview, String specifications, String price, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich) {
         this.country = country;
         this.dateRelease = dateRelease;
         this.overview = overview;
         this.specifications = specifications;
         this.bigPhotoPath = bigPhotoPath;
+        this.catalogNumberITC = catalogNumberITC;
+        this.catalogNumberSK = catalogNumberSK;
+        this.catalogNumberMich = catalogNumberMich;
+        this.price = price;
     }
     @Ignore
     public Stamp(int idStamp, String theme, String country, int year, String dateRelease, String name, String overview, String specifications, String quantity, String catalogNumberITC, String catalogNumberSK, String catalogNumberMich, String catalogNumberScott, String catalogNumberCgib, String price, String photoPath, String bigPhotoPath, String detailUrl, boolean flag) {
