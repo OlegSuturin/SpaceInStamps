@@ -333,13 +333,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         for (int i = yearStart; i <= yearEnd; i++) {
             years.add(Integer.toString(i));
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, years);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, years);
         // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerYearSelect.setAdapter(adapter);
     }
 
     public void initSpinnerThemeSelect() {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.themes_array_string, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.themes_array_string, android.R.layout.simple_spinner_dropdown_item);
         spinnerThemeSelect.setAdapter(adapter);
     }
 
