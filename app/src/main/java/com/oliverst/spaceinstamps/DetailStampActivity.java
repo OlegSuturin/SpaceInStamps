@@ -2,6 +2,7 @@ package com.oliverst.spaceinstamps;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -100,27 +101,28 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     }
 
     //------------------------------------------------menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int idMenu = item.getItemId();
-        switch (idMenu) {
-            case R.id.itemMain:
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.itemFavourite:
-                Intent intentToFavourite = new Intent(this, FavouriteActivity.class);
-                startActivity(intentToFavourite);
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.main_menu, menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        int idMenu = item.getItemId();
+//        switch (idMenu) {
+//            case R.id.itemExit:
+//                Intent intent = new Intent(this, MainActivity.class);
+//                startActivity(intent);
+//                break;
+//            case R.id.itemFavourite:
+//                Intent intentToFavourite = new Intent(this, FavouriteActivity.class);
+//                startActivity(intentToFavourite);
+//                //  startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 //-------------------------------------------------------------
 
     //----------------------------------loader-------------------------------------
@@ -212,6 +214,10 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_stamp);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.hide();
+        }
 
         List<Stamp> stamps = new ArrayList<>();
         List<FavouriteStamp> favouriteStamps = new ArrayList<>();
@@ -422,6 +428,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             currentNum--;
         } else {
             Toast.makeText(this, "Начало списка", Toast.LENGTH_SHORT).show();
+            return;
         }
         if (favouriteTag) {
             //stamp = viewModel.getFavouriteStampById(id);
@@ -453,6 +460,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             currentNum++;
         } else {
             Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT).show();
+            return;
         }
         if (favouriteTag) {
             // stamp = viewModel.getFavouriteStampById(id);

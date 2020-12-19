@@ -54,7 +54,7 @@
 
     <TextView
         android:id="@+id/textViewNumRecord"
-        style="@style/LabelStyle"
+        style="@style/TextDataStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
@@ -95,9 +95,9 @@
 
     <ImageView
         android:id="@+id/imageViewHeart"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
         android:onClick="onClickChangeFavourite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

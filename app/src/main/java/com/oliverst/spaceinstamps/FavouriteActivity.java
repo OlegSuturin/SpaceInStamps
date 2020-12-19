@@ -29,15 +29,25 @@ public class FavouriteActivity extends AppCompatActivity {
     private StampAdapter adapter;
     private RecyclerView recyclerViewTitle;
     private MainViewModel viewModel;
+    ArrayList<Stamp> stamps = new ArrayList<>();
 
     private LiveData<List<FavouriteStamp>> stampsFavouriteLD;
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        //startActivity(intent);
+        setResult(RESULT_OK, intent);
+        finish();
+        super.onBackPressed();
 
-//------------------------------------------------menu
+    }
+
+    //------------------------------------------------menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.favourite_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -47,26 +57,30 @@ public class FavouriteActivity extends AppCompatActivity {
         switch (idMenu) {
             case R.id.itemMain:
                 Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+                //startActivity(intent);
+                setResult(RESULT_OK, intent);
+                finish();
                 break;
-            case R.id.itemFavourite:
-                Intent intentToFavourite = new Intent(this  , FavouriteActivity.class);
-                startActivity(intentToFavourite);
-               // startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
+            case R.id.itemClear:
+                viewModel.deleteAllFavouriteStamps();
+                viewModel.deleteAllFavouriteImageUrlTask();
+                adapter.clearStamps();
         }
         return super.onOptionsItemSelected(item);
     }
-//-------------------------------------------------------------
-@Override
-protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    List<FavouriteStamp> stamps = stampsFavouriteLD.getValue();
-    ArrayList<Stamp> favouriteStamps = new ArrayList<>();
-    favouriteStamps.addAll(stamps);
-    adapter.setStamps(favouriteStamps);
-    adapter.notifyDataSetChanged();
-    Toast.makeText(this, "Возврат", Toast.LENGTH_SHORT).show();
-}
+
+    //-------------------------------------------------------------
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        finish();
+//    List<FavouriteStamp> stamps = stampsFavouriteLD.getValue();
+//    ArrayList<Stamp> favouriteStamps = new ArrayList<>();
+//    favouriteStamps.addAll(stamps);
+//    adapter.setStamps(favouriteStamps);
+//    adapter.notifyDataSetChanged();
+//    Toast.makeText(this, "Возврат", Toast.LENGTH_SHORT).show();
+    }
 
 
     @Override
@@ -75,7 +89,7 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
         setContentView(R.layout.activity_favourite);
 
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar!=null){
+        if (actionBar != null) {
             actionBar.setTitle("Избранное");
         }
 
@@ -85,23 +99,23 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
         recyclerViewTitle.setAdapter(adapter);
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(MainViewModel.class);
 
-        ArrayList<Stamp> stamps = new ArrayList<>();
-          stampsFavouriteLD = viewModel.getFavouriteStampsLiveData();
-          stampsFavouriteLD.observe(this, new Observer<List<FavouriteStamp>>() {
-              @Override
-              public void onChanged(List<FavouriteStamp> favouriteStamps) {
-                  if(favouriteStamps!=null){
-                           stamps.addAll(favouriteStamps);
-                        adapter.setStamps(stamps);
-                  }
-              }
-          });
+
+        stampsFavouriteLD = viewModel.getFavouriteStampsLiveData();
+        stampsFavouriteLD.observe(this, new Observer<List<FavouriteStamp>>() {
+            @Override
+            public void onChanged(List<FavouriteStamp> favouriteStamps) {
+                if (favouriteStamps != null) {
+                    stamps.addAll(favouriteStamps);
+                    adapter.setStamps(stamps);
+                }
+            }
+        });
 
         adapter.setOnStampClickListener(new StampAdapter.OnStampClickListener() {
             @Override
             public void onStampClick(int position) {
                 // Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
-             //   int positionTheme = spinnerThemeSelect.getSelectedItemPosition();
+                //   int positionTheme = spinnerThemeSelect.getSelectedItemPosition();
                 Stamp stamp = adapter.getStamps().get(position);
                 Intent intent = new Intent(FavouriteActivity.this, DetailStampActivity.class);
                 intent.putExtra("id", stamp.getId());
@@ -110,14 +124,12 @@ protected void onActivityResult(int requestCode, int resultCode, @Nullable Inten
                 intent.putExtra("currentNum", position + 1);
                 intent.putExtra("page", -1);
                 intent.putExtra("positionTheme", -1);
-                intent.putExtra("favouriteTag", true );
+                intent.putExtra("favouriteTag", true);
                 startActivityForResult(intent, RESULT_FIRST_USER);
             }
         });
 
 
-
-
-        }  //end of onCreate
+    }  //end of onCreate
 
 }

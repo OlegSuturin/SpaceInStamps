@@ -246,6 +246,18 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
+    public void deleteAllFavouriteStamps() {
+        new DeleteAllFavouriteTask().execute();
+    }
+
+    private static class DeleteAllFavouriteTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            database.stampDao().deleteALLFavouriteStamps();
+            return null;
+        }
+    }
+
 
 //---------------------------------------------------------------------------------------
 

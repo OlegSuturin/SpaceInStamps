@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SpaceInStamps</string>
+    <string name="app_name">ФИЛАТЕЛИСТ: Русские марки</string>
     <string name="left"><![CDATA[<<]]></string>
     <string name="right"><![CDATA[>>]]></string>
     <string name="item_menu_main">Главная</string>
@@ -21,7 +21,12 @@
         <item>Корабли, флот</item>
     </string-array>
     <string-array name="year_array_string">
-    <item>1961</item>
-    <item>1962</item>
+        <item>1961</item>
+        <item>1962</item>
+    </string-array>
+    <string-array name="range_array_string">
+        <item>МАРКИ РОССИЯ И СССР 1857-1960</item>
+        <item>МАРКИ СССР 1961-1991</item>
+        <item>МАРКИ РОССИЙСКАЯ ФЕДЕРАЦИЯ 1992-2020</item>
     </string-array>
 </resources>

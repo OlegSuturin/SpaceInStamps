@@ -37,6 +37,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
+
+    private Spinner spinnerRangeSelect;
+
+    public static final int RANGE_1857_1960 = 1;
+    public static final int RANGE_1861_1991 = 2;
+    public static final int RANGE_1992_2020 = 3;
+
+
     private static int methodOfSort = 1;
     public static final int SORT_BY_THEME = 1;
     public static final int SORT_BY_YEAR = 2;
@@ -72,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static int recordsNumberG;             //кол-во записей найдено
 
     private LiveData<List<Stamp>> stampsFromLiveData;
+    private static int  exitCount = 0;
 
     //--------------------------------menu---------------------------------------------
     @Override
@@ -85,14 +94,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int idMenu = item.getItemId();
         switch (idMenu) {
-            case R.id.itemMain:
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                break;
             case R.id.itemFavourite:
+                exitCount = 0;
                 Intent intentToFavourite = new Intent(this, FavouriteActivity.class);
-                startActivity(intentToFavourite);
-                //  startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
+                //startActivity(intentToFavourite);
+                startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
+                break;
+            case R.id.itemExit:
+                System.exit (0);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -112,6 +122,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
+    public void onBackPressed() {
+        if(exitCount < 1) {
+            Toast.makeText(this, "Для выхода нажмите еще раз", Toast.LENGTH_SHORT).show();
+            exitCount++;
+            return;
+        }
+        System.exit (0);
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -121,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         textViewSortByKeyword = findViewById(R.id.textViewSortByKeyword);
         editTextSearchKeyword = findViewById(R.id.editTextSearchKeyword);
         imageViewSearchKeyword = findViewById(R.id.imageViewSearchKeyword);
+
+        spinnerRangeSelect = findViewById(R.id.spinnerRangeSelect);
 
         spinnerThemeSelect = findViewById(R.id.spinnerThemeSelect);
         recyclerViewTitle = findViewById(R.id.recyclerViewTitle);
@@ -136,6 +159,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(MainViewModel.class);
         loaderManager = LoaderManager.getInstance(this);
+
+        //слушатель выбора на спинере - ранг
+        AdapterView.OnItemSelectedListener onItemSelectedRangeListener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        };
+        spinnerRangeSelect.setOnItemSelectedListener(onItemSelectedRangeListener);
 
         //слушатель выбора на спинере - тема
         AdapterView.OnItemSelectedListener onItemSelectedThemeListener = new AdapterView.OnItemSelectedListener() {
@@ -171,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     }
                 }
                 flagNoInitYear = true;
+                exitCount = 0;
             }
 
             @Override
@@ -184,29 +222,31 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter.setOnStampClickListener(new StampAdapter.OnStampClickListener() {
             @Override
             public void onStampClick(int position) {
+                exitCount = 0;
                 // Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
                 int positionTheme = spinnerThemeSelect.getSelectedItemPosition();
                 Stamp stamp = adapter.getStamps().get(position);
-                Intent intent = new Intent(MainActivity.this, DetailStampActivity.class);
-                intent.putExtra("id", stamp.getId());
-                intent.putExtra("idStamp", stamp.getIdStamp());
-                intent.putExtra("recordsNum", recordsNumberG);
-                intent.putExtra("currentNum", position + 1);
-                intent.putExtra("page", pageG);
-                intent.putExtra("positionTheme", positionTheme);
-                intent.putExtra("favouriteTag", false);
-                intent.putExtra("methodOfSort", methodOfSort);
-                intent.putExtra("year", year);
-                intent.putExtra("keyword", keyword);
-                startActivityForResult(intent, RESULT_FIRST_USER);
-
-            }
+                if(stamp !=null){
+                    Intent intent = new Intent(MainActivity.this, DetailStampActivity.class);
+                    intent.putExtra("id", stamp.getId());
+                    intent.putExtra("idStamp", stamp.getIdStamp());
+                    intent.putExtra("recordsNum", recordsNumberG);
+                    intent.putExtra("currentNum", position + 1);
+                    intent.putExtra("page", pageG);
+                    intent.putExtra("positionTheme", positionTheme);
+                    intent.putExtra("favouriteTag", false);
+                    intent.putExtra("methodOfSort", methodOfSort);
+                    intent.putExtra("year", year);
+                    intent.putExtra("keyword", keyword);
+                    startActivityForResult(intent, RESULT_FIRST_USER);
+                }
+          }
         });
         //слушатель достижения конца списка
         adapter.setOnReachEndListener(new StampAdapter.OnReachEndListener() {
             @Override
             public void onReachEnd() {
-
+                exitCount = 0;
                 // Toast.makeText(MainActivity.this, "конец списка page =" + pageG, Toast.LENGTH_SHORT).show();
                 if (!isLoading) {   //если процесс загрузки не идет
                     //  methodOfSort = SORT_BY_THEME;
@@ -329,6 +369,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 //-------------------------------------------------------------------------
 
     public void initSpinnerYearSelect(int yearStart, int yearEnd) {
+        exitCount = 0;
         ArrayList<String> years = new ArrayList<>();
         for (int i = yearStart; i <= yearEnd; i++) {
             years.add(Integer.toString(i));
@@ -339,14 +380,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void initSpinnerThemeSelect() {
+        exitCount = 0;
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.themes_array_string, android.R.layout.simple_spinner_dropdown_item);
         spinnerThemeSelect.setAdapter(adapter);
     }
 
 
     public void onClickSortByTheme(View view) {
+        exitCount = 0;
         textViewSortByTheme.setTextColor(getResources().getColor(R.color.black));
-        textViewSortByTheme.setBackgroundColor(getResources().getColor(R.color.gray_400));
+        textViewSortByTheme.setBackgroundColor(getResources().getColor(R.color.main_blue_light2));
         textViewSortByYear.setTextColor(getResources().getColor(R.color.white));
         textViewSortByYear.setBackgroundColor(getResources().getColor(R.color.black));
         textViewSortByKeyword.setTextColor(getResources().getColor(R.color.white));
@@ -361,8 +404,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void onClickSortByYear(View view) {
+        exitCount = 0;
         textViewSortByYear.setTextColor(getResources().getColor(R.color.black));
-        textViewSortByYear.setBackgroundColor(getResources().getColor(R.color.gray_400));
+        textViewSortByYear.setBackgroundColor(getResources().getColor(R.color.main_blue_light2));
         textViewSortByTheme.setTextColor(getResources().getColor(R.color.white));
         textViewSortByTheme.setBackgroundColor(getResources().getColor(R.color.black));
         textViewSortByKeyword.setTextColor(getResources().getColor(R.color.white));
@@ -377,6 +421,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void onClickSortByKeyword(View view) {
+        exitCount = 0;
         editTextSearchKeyword.setText("");
         keyword = "";
         adapter.clearStamps();
@@ -385,7 +430,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         textViewSortByKeyword.setTextColor(getResources().getColor(R.color.black));
-        textViewSortByKeyword.setBackgroundColor(getResources().getColor(R.color.gray_400));
+        textViewSortByKeyword.setBackgroundColor(getResources().getColor(R.color.main_blue_light2));
         textViewSortByYear.setTextColor(getResources().getColor(R.color.white));
         textViewSortByYear.setBackgroundColor(getResources().getColor(R.color.black));
         textViewSortByTheme.setTextColor(getResources().getColor(R.color.white));
@@ -399,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void onClickSearchKeyword(View view) {
-
+        exitCount = 0;
         keyword = editTextSearchKeyword.getText().toString();
         if (!keyword.isEmpty()) {
             methodOfSort = SORT_BY_KEYWORD;

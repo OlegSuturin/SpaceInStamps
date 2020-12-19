@@ -32,8 +32,8 @@ public class NetworkUtils {
     private static final String baseUrl = "http://www.philately.ru";
     private static final String searchBaseUrl = "http://www.philately.ru/cgi-bin/sql/search2.cgi?&action=search&tag=%s&page=%s";
     private static final String searchBaseUrlByYear = "http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&year=%s&page=%s";
-    private static final String searchBaseUrlByKeyword = "http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=&cat_name=catalogue&lang=&keyword=%s&page=%s";
-    //  http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=%%C0%E2%E8%E0&cat_name=&page=2&lang=&keyword=
+    //private static final String searchBaseUrlByKeyword = "http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=&cat_name=catalogue&lang=&keyword=%s&page=%s";
+    private static final String searchBaseUrlByKeyword = "http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&cat_name=catalogue&keyword=%s&page=%s";
     private static final String baseDetailUrl = "http://www.philately.ru/cgi-bin/sql/search2.cgi?action=view_details&id=";
 
     public static final int COSMOS = 0;         //Космос

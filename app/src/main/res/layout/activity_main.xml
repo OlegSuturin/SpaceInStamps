@@ -8,12 +8,36 @@
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintSelect"
+        android:id="@+id/constraintSelectRange"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <Spinner
+            style="@style/spinner_style"
+            android:id="@+id/spinnerRangeSelect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/range_array_string"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintSelectSort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintSelectRange">
 
         <TextView
             android:id="@+id/textViewSortByTheme"
@@ -78,9 +102,9 @@
         android:id="@+id/constraintSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gray_400"
+        android:background="@color/main_blue_light2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintSelect">
+        app:layout_constraintTop_toBottomOf="@+id/constraintSelectSort">
 
         <Spinner
             style="@style/spinner_style"
@@ -89,6 +113,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
@@ -99,6 +124,7 @@
             android:entries="@array/year_array_string"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
@@ -110,6 +136,7 @@
             android:inputType="text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView

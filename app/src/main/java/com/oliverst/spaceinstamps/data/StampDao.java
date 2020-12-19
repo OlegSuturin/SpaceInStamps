@@ -32,6 +32,9 @@ public interface StampDao {
     @Query("SELECT COUNT(*) FROM favourite_stamp")
     int getItemCountFavouriteStamps();
 
+    @Query("DELETE FROM favourite_stamp")
+    void deleteALLFavouriteStamps();
+
 
     //табл stamps
     @Query("SELECT * FROM stamps")
