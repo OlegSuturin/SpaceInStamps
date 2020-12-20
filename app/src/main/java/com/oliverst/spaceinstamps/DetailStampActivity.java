@@ -49,6 +49,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     private int methodOfSort;
     private int year;
     private String keyword;
+    private String range;
 
     private TextView textViewCountryInfo;
     private TextView textViewYearInfo;
@@ -167,13 +168,13 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         URL url = null;
         switch (methodOfSort) {
             case MainActivity.SORT_BY_THEME:
-                url = NetworkUtils.buildURL(positionTheme, page);
+                url = NetworkUtils.buildURL(positionTheme, page, range);
                 break;
             case MainActivity.SORT_BY_YEAR:
-                url = NetworkUtils.buildURLByYear(year, page);
+                url = NetworkUtils.buildURLByYear(year, page, range);
                 break;
             case MainActivity.SORT_BY_KEYWORD:
-                url = NetworkUtils.buildURLByKeyword(keyword, page);
+                url = NetworkUtils.buildURLByKeyword(keyword, page, range);
                 break;
         }
 
@@ -207,6 +208,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         outState.putInt("methodOfSort", methodOfSort);
         outState.putInt("year", year);
         outState.putString("keyword", keyword);
+        outState.putString("range", range);
         super.onSaveInstanceState(outState);
     }
 
@@ -253,6 +255,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             methodOfSort = intent.getIntExtra("methodOfSort", -1);
             year = intent.getIntExtra("year", -1);
             keyword = intent.getStringExtra("keyword");
+            range = intent.getStringExtra("range");
 
             Toast.makeText(this, "FT: " + favouriteTag, Toast.LENGTH_SHORT).show();
         } else {
@@ -270,6 +273,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             methodOfSort = savedInstanceState.getInt("methodOfSort");
             year = savedInstanceState.getInt("year");
             keyword = savedInstanceState.getString("keyword");
+            range = savedInstanceState.getString("range");
         }
 
         loaderManager = LoaderManager.getInstance(this);
@@ -364,7 +368,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             Toast.makeText(this, "данные не загружены", Toast.LENGTH_SHORT).show();
             finish();               //  закрываем активность, если что то не так
         }
-        Stamp stampDetail = NetworkUtils.parserDetailStamp(data, Integer.toString(stamp.getYear()));
+        Stamp stampDetail = NetworkUtils.parserDetailStamp(data, Integer.toString(stamp.getYear()), range);
         stamp.setCountry(stampDetail.getCountry());
         stamp.setDateRelease(stampDetail.getDateRelease());
         stamp.setOverview(stampDetail.getOverview());
@@ -396,8 +400,25 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         textViewPriceInfo.setText(stamp.getPrice());
         textViewSpecificationsInfo.setText(stamp.getSpecifications());
         textViewOverviewInfo.setText(stamp.getOverview());
-        String catalogNumbers = String.format("ИТС: %s СК: %s Михель: %s", stamp.getCatalogNumberITC(), stamp.getCatalogNumberSK(), stamp.getCatalogNumberMich());
-        textViewCatalogNumbersInfo.setText(catalogNumbers);
+       // String catalogNumbers = String.format("ИТЦ: %s СК: %s Михель: %s", stamp.getCatalogNumberITC(), stamp.getCatalogNumberSK(), stamp.getCatalogNumberMich());
+        StringBuilder catalogNumbers= new StringBuilder();
+        if (!stamp.getCatalogNumberITC().isEmpty()){
+            catalogNumbers.append("ИТЦ: ");
+            catalogNumbers.append(stamp.getCatalogNumberITC());
+            catalogNumbers.append("; ");
+        }
+        if (!stamp.getCatalogNumberSK().isEmpty()){
+            catalogNumbers.append("СК: ");
+            catalogNumbers.append(stamp.getCatalogNumberSK());
+            catalogNumbers.append("; ");
+        }
+        if (!stamp.getCatalogNumberMich().isEmpty()){
+            catalogNumbers.append("Михель: ");
+            catalogNumbers.append(stamp.getCatalogNumberMich());
+            catalogNumbers.append("; ");
+        }
+
+        textViewCatalogNumbersInfo.setText(catalogNumbers.toString());
 
         List<ImageUrl> imagesUrl = new ArrayList<>();
         if (favouriteTag) {

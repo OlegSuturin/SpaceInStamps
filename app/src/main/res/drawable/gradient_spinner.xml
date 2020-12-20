@@ -9,7 +9,7 @@
 
             <corners android:radius="4dp" />
 
-            <padding android:bottom="0dp" android:left="2dp" android:right="2dp" android:top="0dp" />
+            <padding android:bottom="2dp" android:left="2dp" android:right="2dp" android:top="2dp" />
         </shape></item>
         <item><bitmap android:gravity="bottom|right" android:src="@drawable/spinner_arrow" />
         </item>

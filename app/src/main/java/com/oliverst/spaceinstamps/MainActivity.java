@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,10 +38,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
 
     private Spinner spinnerRangeSelect;
-
-    public static final int RANGE_1857_1960 = 1;
-    public static final int RANGE_1861_1991 = 2;
-    public static final int RANGE_1992_2020 = 3;
+    public static String range;
+    public static final int RANGE_1857_1960 = 0;
+    public static final int RANGE_1961_1991 = 1;
+    public static final int RANGE_1992_2020 = 2;
 
 
     private static int methodOfSort = 1;
@@ -58,8 +57,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ImageView imageViewSearchKeyword;
     private static String keyword;
 
-    private static final int YEAR_START = 1961;
-    private static final int YEAR_END = 1991;
+    private static int yearStart;
+    private static int yearEnd;
     private Spinner spinnerYearSelect;
     private static boolean flagNoInitYear = false;
     private int year;
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static int recordsNumberG;             //кол-во записей найдено
 
     private LiveData<List<Stamp>> stampsFromLiveData;
-    private static int  exitCount = 0;
+    private static int exitCount = 0;
 
     //--------------------------------menu---------------------------------------------
     @Override
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
                 break;
             case R.id.itemExit:
-                System.exit (0);
+                System.exit(0);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -123,12 +122,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onBackPressed() {
-        if(exitCount < 1) {
+        if (exitCount < 1) {
             Toast.makeText(this, "Для выхода нажмите еще раз", Toast.LENGTH_SHORT).show();
             exitCount++;
             return;
         }
-        System.exit (0);
+        System.exit(0);
         super.onBackPressed();
     }
 
@@ -164,6 +163,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         AdapterView.OnItemSelectedListener onItemSelectedRangeListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case RANGE_1857_1960:
+                        range = "1";
+                        yearStart = 1857;
+                        yearEnd = 1960;
+                        themeVisible(false);
+                        break;
+                    case RANGE_1961_1991:
+                        range = "2";
+                        yearStart = 1961;
+                        yearEnd = 1991;
+                        themeVisible(true);
+                        break;
+                    case RANGE_1992_2020:
+                        range = "";
+                        yearStart = 1992;
+                        yearEnd = 2020;
+                        themeVisible(true);
+                        break;
+                    default:
+
+                }
+
+                Toast.makeText(MainActivity.this, range, Toast.LENGTH_SHORT).show();
 
             }
 
@@ -226,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 // Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
                 int positionTheme = spinnerThemeSelect.getSelectedItemPosition();
                 Stamp stamp = adapter.getStamps().get(position);
-                if(stamp !=null){
+                if (stamp != null) {
                     Intent intent = new Intent(MainActivity.this, DetailStampActivity.class);
                     intent.putExtra("id", stamp.getId());
                     intent.putExtra("idStamp", stamp.getIdStamp());
@@ -238,9 +261,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     intent.putExtra("methodOfSort", methodOfSort);
                     intent.putExtra("year", year);
                     intent.putExtra("keyword", keyword);
+                    intent.putExtra("range", range);
                     startActivityForResult(intent, RESULT_FIRST_USER);
                 }
-          }
+            }
         });
         //слушатель достижения конца списка
         adapter.setOnReachEndListener(new StampAdapter.OnReachEndListener() {
@@ -284,13 +308,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         URL url = null;
         switch (methodOfSort) {
             case SORT_BY_THEME:
-                url = NetworkUtils.buildURL(position, pageG);
+                url = NetworkUtils.buildURL(position, pageG, range);
                 break;
             case SORT_BY_YEAR:
-                url = NetworkUtils.buildURLByYear(position, pageG);
+                url = NetworkUtils.buildURLByYear(position, pageG, range);
                 break;
             case SORT_BY_KEYWORD:
-                url = NetworkUtils.buildURLByKeyword(keyword, pageG);
+                url = NetworkUtils.buildURLByKeyword(keyword, pageG, range);
                 // Toast.makeText(this, url.toString(), Toast.LENGTH_SHORT).show();
                 break;
         }//end of case
@@ -338,8 +362,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             //код обработки единичной формы
             Stamp stamp;
             int idStamp = recordsNumberG * (-1);
-            stamp = NetworkUtils.parserTitlesSingleStamp(data, idStamp);
-                stamps.add(stamp);
+            stamp = NetworkUtils.parserTitlesSingleStamp(data, idStamp, range);
+            stamps.add(stamp);
             recordsNumberG = 1;
         } else {
             stamps = NetworkUtils.parserTitlesStamp(data);
@@ -371,17 +395,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void initSpinnerYearSelect(int yearStart, int yearEnd) {
         exitCount = 0;
         ArrayList<String> years = new ArrayList<>();
-        for (int i = yearStart; i <= yearEnd; i++) {
+        for (int i = yearEnd; i >= yearStart; i--) {
             years.add(Integer.toString(i));
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, years);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, years);
         // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerYearSelect.setAdapter(adapter);
     }
 
     public void initSpinnerThemeSelect() {
         exitCount = 0;
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.themes_array_string, android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.themes_array_string, android.R.layout.simple_spinner_item);
         spinnerThemeSelect.setAdapter(adapter);
     }
 
@@ -417,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         editTextSearchKeyword.setVisibility(View.INVISIBLE);
         imageViewSearchKeyword.setVisibility(View.INVISIBLE);
 
-        initSpinnerYearSelect(YEAR_START, YEAR_END);
+        initSpinnerYearSelect(yearStart, yearEnd);
     }
 
     public void onClickSortByKeyword(View view) {
@@ -453,6 +477,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if (!isLoading) {   //если процесс загрузки не идет
                 downLoadData(-1);
             }
+        }
+    }
+
+    void themeVisible(boolean flag){
+        if(flag){  // тема видима
+            onClickSortByTheme(textViewSortByTheme);
+            textViewSortByTheme.setVisibility(View.VISIBLE);
+        }else{
+            onClickSortByYear(textViewSortByYear);
+            textViewSortByTheme.setVisibility(View.INVISIBLE);
         }
     }
 
