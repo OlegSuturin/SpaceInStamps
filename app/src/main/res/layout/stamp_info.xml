@@ -83,7 +83,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="Название выпуска:"
+        android:text="Название:"
         app:layout_constraintEnd_toStartOf="@+id/guidelineCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewYearInfo" />
@@ -116,7 +116,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="Количество марок:"
+        android:text="Кол-во марок:"
         app:layout_constraintEnd_toStartOf="@+id/guidelineCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewNameInfo" />
@@ -181,7 +181,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:layout_marginTop="8dp"
-        android:text="Номера по каталогам:"
+        android:text="Каталог №:"
         app:layout_constraintEnd_toStartOf="@+id/guidelineCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewDateReleaseInfo" />
@@ -214,7 +214,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:layout_marginTop="9dp"
-        android:text="Цена рыночная (руб.):"
+        android:text="Оценка(руб.):"
         app:layout_constraintEnd_toStartOf="@+id/guidelineCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewCatalogNumbersInfo" />
@@ -310,17 +310,17 @@
             app:srcCompat="@drawable/pics"
             android:layout_margin="8dp"/>
 
-        <TextView
-            style="@style/TextDataStyle"
-            android:id="@+id/textViewNumberOfPics"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:text="TextView"
-            android:layout_margin="8dp"
-            app:layout_constraintStart_toEndOf="@+id/imageViewPics"
-            app:layout_constraintTop_toBottomOf="@+id/textViewOverviewInfo" />
+    <TextView
+        android:id="@+id/textViewNumberOfPics"
+        style="@style/TextDataStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="TextView"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewPics"
+        app:layout_constraintStart_toEndOf="@+id/imageViewPics"
+        app:layout_constraintTop_toTopOf="@+id/imageViewPics" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpaceInStamps"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ScaledImageActivity"></activity>
+        <activity android:name=".ScaledImageActivity" />
         <activity android:name=".FavouriteActivity" />
         <activity android:name=".DetailStampActivity" />
         <activity android:name=".MainActivity">

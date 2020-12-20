@@ -25,5 +25,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/lupa" />
 
+    <TextView
+        style="@style/TextDataStyle"
+        android:id="@+id/textViewNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="0dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/imageViewBigStamp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

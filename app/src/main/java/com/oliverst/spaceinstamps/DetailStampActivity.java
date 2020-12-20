@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -68,6 +69,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     private ImageView imageViewRight;
     private ImageView imageViewHeart;
 
+
     private ImagesAdapter adapter;
     private MainViewModel viewModel;
     private Stamp stamp;
@@ -78,13 +80,11 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     private static final int LOADER_ID = 1133; // - уникальный идентификатор загрузчика, определяем сами
     private LoaderManager loaderManager;      //  - менеджер загрузок
     private ProgressBar progressBarLoadingOnDetail;
-
-    // private LiveData<List<Stamp>> stampsLD;
-
-    //  private List<Stamp> stamps;
-
     private LiveData<List<FavouriteStamp>> favouriteStampsLD;
-    //  private List<FavouriteStamp> favouriteStamps;
+
+    private final Handler handler = new Handler();
+    private Runnable runnableR;
+    private Runnable runnableL;
 
     @Override
     public void onBackPressed() {
@@ -238,6 +238,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         imageViewHeart = findViewById((R.id.imageViewHeart));
         textViewNumberOfPics = findViewById(R.id.textViewNumberOfPics);
 
+
         adapter = new ImagesAdapter();
         recyclerViewImagesInfo = findViewById(R.id.recyclerViewImagesInfo);
         textViewNumRecord = findViewById(R.id.textViewNumRecord);
@@ -356,6 +357,21 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             }
         });
         itemTouch.attachToRecyclerView(recyclerViewImagesInfo);
+
+        runnableR = new Runnable() {   //мигание красной стрелкой при нажатии вправо
+            @Override
+            public void run() {
+                imageViewRight.setImageResource(R.drawable.right);
+            }
+        };
+
+        runnableL = new Runnable() {   //мигание красной стрелкой при нажатии влево
+            @Override
+            public void run() {
+                imageViewLeft.setImageResource(R.drawable.left);
+            }
+        };
+
     } //end of onCreate
 
     public void downloadDetail() {
@@ -434,19 +450,22 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             textViewNumberOfPics.setTextColor(getResources().getColor(android.R.color.darker_gray));
         }
 
-        textViewNumberOfPics.setText(" " + number + ":");
+        textViewNumberOfPics.setText(" " + number);
         //Log.i("!@#", imagesUrl.get(0).getUrl());
 
         recyclerViewImagesInfo.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewImagesInfo.setAdapter(adapter);
         adapter.setImagesUrl(imagesUrl);
         setColorHeart();
+
     }
 
     public void onClickLeft(View view) {
         if (currentNum > 1) {
             id--;
             currentNum--;
+            imageViewLeft.setImageResource(R.drawable.left_on);
+            handler.postDelayed(runnableL, 750);
         } else {
             Toast.makeText(this, "Начало списка", Toast.LENGTH_SHORT).show();
             return;
@@ -479,6 +498,8 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         if (currentNum < recordsNum) {
             id++;
             currentNum++;
+            imageViewRight.setImageResource(R.drawable.right_on);
+            handler.postDelayed(runnableR, 750);
         } else {
             Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT).show();
             return;
@@ -532,6 +553,10 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             Toast.makeText(this, "Удалено из избранного", Toast.LENGTH_SHORT).show();
         }
         setColorHeart();
+    }
+
+    public void runTimerRight(){
+
     }
 
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder> {
-   private List<ImageUrl> imagesUrl;
-   OnImageClickListener onImageClickListener;
+    private List<ImageUrl> imagesUrl;
+    OnImageClickListener onImageClickListener;
 
     public ImagesAdapter() {
         imagesUrl = new ArrayList<>();
@@ -34,7 +35,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImagesView
     }
 
     //Метод очистки recyclerView
-    public void clear(){
+    public void clear() {
         this.imagesUrl.clear();
         notifyDataSetChanged();  //всегда оповещаем адаптер об изменении массива
     }
@@ -57,10 +58,11 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImagesView
 
     @Override
     public void onBindViewHolder(@NonNull ImagesViewHolder holder, int position) {
-         ImageUrl imageUrl = imagesUrl.get(position);
-         String url = imageUrl.getUrl();
+        holder.textViewNumber.setText(Integer.toString(position + 1) + ":");
+        ImageUrl imageUrl = imagesUrl.get(position);
+        String url = imageUrl.getUrl();
 
-       Picasso.get().load(url).placeholder(R.drawable.placeholder).into(holder.imageViewBigStamp);
+        Picasso.get().load(url).placeholder(R.drawable.placeholder).into(holder.imageViewBigStamp);
     }
 
     @Override
@@ -68,24 +70,26 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImagesView
         return imagesUrl.size();
     }
 
-    public class ImagesViewHolder extends RecyclerView.ViewHolder{
-       private ImageView imageViewBigStamp;
+    public class ImagesViewHolder extends RecyclerView.ViewHolder {
+        private ImageView imageViewBigStamp;
+        private TextView textViewNumber;
 
-       public ImagesViewHolder(@NonNull View itemView) {
-           super(itemView);
-           imageViewBigStamp = itemView.findViewById(R.id.imageViewBigStamp);
+        public ImagesViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageViewBigStamp = itemView.findViewById(R.id.imageViewBigStamp);
+            textViewNumber = itemView.findViewById(R.id.textViewNumber);
 
-           itemView.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-                   if(onImageClickListener!=null){
-                       onImageClickListener.onImageClick(getAdapterPosition());
-                   }
-               }
-           });
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onImageClickListener != null) {
+                        onImageClickListener.onImageClick(getAdapterPosition());
+                    }
+                }
+            });
 
-       }
-   }
+        }
+    }
 }
 
 
