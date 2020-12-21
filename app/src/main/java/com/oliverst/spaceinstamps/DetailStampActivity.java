@@ -468,6 +468,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             handler.postDelayed(runnableL, 750);
         } else {
             Toast.makeText(this, "Начало списка", Toast.LENGTH_SHORT).show();
+            applyDetail();
             return;
         }
         if (favouriteTag) {
@@ -502,6 +503,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             handler.postDelayed(runnableR, 750);
         } else {
             Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT).show();
+            applyDetail();
             return;
         }
         if (favouriteTag) {
