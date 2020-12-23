@@ -7,14 +7,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <com.oliverst.spaceinstamps.utils.ScaledImageView
-        android:id="@+id/scaledImageView"
-        style="@style/Widget.Theme.SpaceInStamps.MyView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black"
-        app:exampleDimension="24sp"
-        app:exampleDrawable="@color/gray_600" />
+        <com.oliverst.spaceinstamps.utils.ScaledImageView
+            android:id="@+id/scaledImageView"
+            style="@style/Widget.Theme.SpaceInStamps.MyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="50dp"
+            android:background="@color/black"
+            app:exampleDimension="24sp"
+            app:exampleDrawable="@color/gray_600" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

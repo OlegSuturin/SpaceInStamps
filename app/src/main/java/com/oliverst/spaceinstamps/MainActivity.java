@@ -81,6 +81,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private LiveData<List<Stamp>> stampsFromLiveData;
     private static int exitCount = 0;
 
+
+
+
     //--------------------------------menu---------------------------------------------
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -149,8 +152,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         progressBarLoading = findViewById(R.id.progressBarLoading);
         spinnerYearSelect = findViewById(R.id.spinnerYearSelect);
 
-        onClickSortByTheme(textViewSortByTheme);    //сортировка по умолчанию - По теме
-
+       // onClickSortByTheme(textViewSortByTheme);    //сортировка по умолчанию - По теме
+        editTextSearchKeyword.setSelected(false);       //Остановить EditText от получения фокуса при запуске Activity
 
         adapter = new StampAdapter();
         recyclerViewTitle.setLayoutManager(new LinearLayoutManager(this));
@@ -491,3 +494,5 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 }
+
+

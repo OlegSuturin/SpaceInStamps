@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">ФИЛАТЕЛИСТ: Русские марки</string>
+    <string name="app_name">Филателист: русские марки</string>
     <string name="left"><![CDATA[<<]]></string>
     <string name="right"><![CDATA[>>]]></string>
     <string name="item_menu_main">Главная</string>
     <string name="item_menu_favourite">Избранное</string>
+    <string name="app_id">ID500</string>
     <string-array name="themes_array_string">
         <item>Космос</item>
         <item>Флора</item>
