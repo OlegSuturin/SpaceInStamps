@@ -89,7 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickSortByKeyword"
-            android:text="По ключевому слову"
+            android:text="По названию"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/view02"
@@ -128,15 +128,15 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            style="@style/edit_text_style"
             android:id="@+id/editTextSearchKeyword"
+            style="@style/edit_text_style"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:hint="Название/слово"
             android:inputType="text"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView

@@ -112,21 +112,6 @@ public class NetworkUtils {
         Pattern patternYear;
         Matcher matcherYear;
 
-//        String catalogNumberITC = "";
-//        String stringPatternITC = "</a></td><td>(.*?)</td><td>";
-//        Pattern patternNumberITC = Pattern.compile(stringPatternITC);
-//        Matcher matcherNumberITC;
-//
-//        String catalogNumberSK = "";
-//        String stringPatternSK;
-//        Pattern patternNumberSK;
-//        Matcher matcherNumberSK;
-//
-//        String catalogNumberMich = "";
-//        String stringPatternMich;
-//        Pattern patternNumberMich;
-//        Matcher matcherNumberMich;
-
         String name = "";
         String stringPatternName;
         Pattern patternName;
@@ -137,11 +122,6 @@ public class NetworkUtils {
         String stringPatternQuantity = "</a></td><td align=center>(.*?)</td>";
         Pattern patternQuantity = Pattern.compile(stringPatternQuantity);
         Matcher matcherQuantity;
-
-//        String price = "";
-//        String stringPatternPrice = "</td>\t<td>(.*?)</td></tr>";
-//        Pattern patternPrice = Pattern.compile(stringPatternPrice);
-//        Matcher matcherPrice;
 
         String detailUrl = "";
         String stringPatternUrl;
@@ -161,24 +141,6 @@ public class NetworkUtils {
                 year = matcherYear.group(1);
             }
 
-//            matcherNumberITC = patternNumberITC.matcher(buf);
-//            if (matcherNumberITC.find()) {
-//                catalogNumberITC = matcherNumberITC.group(1);
-//            }
-//
-//            stringPatternSK = String.format("%s</td><td>(.*?)</td><td>", catalogNumberITC);
-//            patternNumberSK = Pattern.compile(stringPatternSK);
-//            matcherNumberSK = patternNumberSK.matcher(buf);
-//            if (matcherNumberSK.find()) {
-//                catalogNumberSK = matcherNumberSK.group(1);
-//            }
-//
-//            stringPatternMich = String.format("%s</td><td>(.*?)</td><td align", catalogNumberSK);
-//            patternNumberMich = Pattern.compile(stringPatternMich);
-//            matcherNumberMich = patternNumberMich.matcher(buf);
-//            if (matcherNumberMich.find()) {
-//                catalogNumberMich = matcherNumberMich.group(1);
-//            }
 
             stringPatternName = String.format("id=%s\">(.*?)</td><td align=center>", idStamp);
             patternName = Pattern.compile(stringPatternName);
@@ -199,11 +161,6 @@ public class NetworkUtils {
                 quantity = matcherQuantity.group(1);
             }
 
-//            matcherPrice = patternPrice.matcher(buf);
-//            if (matcherPrice.find()) {
-//                price = matcherPrice.group(1);
-//            }
-
             stringPatternUrl = String.format("/cgi-bin/(.*?)id=%s", idStamp);
             patternName = Pattern.compile(stringPatternUrl);
             matcherUrl = patternName.matcher(buf);
@@ -213,7 +170,7 @@ public class NetworkUtils {
 
             if (!idStamp.isEmpty()) {
                 Stamp stamp = new Stamp(Integer.parseInt(idStamp), Integer.parseInt(year), name, quantity, detailUrl);
-                //stamp.setCountry("СССР");
+
                 stamps.add(stamp);
             }
 
@@ -226,24 +183,25 @@ public class NetworkUtils {
         Stamp stamp = null;
 
         String detailUrl = String.format(detailBaseUrl, range, idStamp);
-        // String detailUrl = detailBaseUrl + idStamp;
-        //Log.i("!@#", detailUrl);
+
         String year = "";
         String quantity = "";
         String name = "";
-//        String catalogNumberMich = "";
-//        String catalogNumberITC = "";
-//        String catalogNumberSK = "";
-//        String price = "";
+
+        Log.i("!@#", "single");
+
 
         String buf = "";
-        String stringPatternBuf = "Страна:</FONT>(.*?)</td></tr></table></td></tr></table><br></center></TD>";
+        String stringPatternBuf = "Страна:</FONT>(.*?)</tr></table><br></center></TD>";
+
+            //String stringPatternBuf = "Страна:</FONT>(.*?)</td></tr></table></td></tr></table><br></center></TD>";
+
         Pattern patternBuf = Pattern.compile(stringPatternBuf);
         Matcher matcherBuf = patternBuf.matcher(data);
         if (matcherBuf.find()) {
             buf = matcherBuf.group(0);
         }
-        // Log.i("!@#", buf);
+        Log.i("!@#", buf);
 
         if (buf != null) {
 
@@ -255,8 +213,8 @@ public class NetworkUtils {
             if (matcherYear.find()) {
                 year = matcherYear.group(1);
             }
-            // Log.i("!@#", year);
 
+                Log.i("!@#", year);
 
             String stringPatternQuantity = "Кол. марок:</FONT>&nbsp;&nbsp;<Font face=\"Verdana, Arial, Helvetica\" Size=2 Color=#003399>(.*?)</TD>";
             Pattern patternQuantity = Pattern.compile(stringPatternQuantity);
@@ -265,7 +223,7 @@ public class NetworkUtils {
             if (matcherQuantity.find()) {
                 quantity = matcherQuantity.group(1);
             }
-            // Log.i("!@#", quantity);
+            Log.i("!@#", quantity);
 
 
             String stringPatternName = "Название выпуска:</FONT>&nbsp;&nbsp;<Font face=\"Verdana, Arial, Helvetica\" Size=2 Color=#003399>(.*?)</TD></TR><TR><TD";
@@ -274,54 +232,16 @@ public class NetworkUtils {
             if (matcherName.find()) {
                 name = matcherName.group(1);
             }
-            // Log.i("!@#", name);
+            Log.i("!@#", name);
 
+            int y = 0;
+            if (!year.isEmpty()){
+                y = Integer.parseInt(year);
+            }
 
-//            String stringPatternMich ="Михель:</font>(.*?)&nbsp;&nbsp;<";
-//            Pattern patternNumberMich = Pattern.compile(stringPatternMich);
-//            Matcher matcherNumberMich = patternNumberMich.matcher(buf);
-//            if (matcherNumberMich.find()) {
-//                catalogNumberMich = matcherNumberMich.group(1).trim();
-//            }
-//           // Log.i("!@#", catalogNumberMich);
-//
-//
-//            String stringPatternITC = "ИТЦ:</font>(.*?)&nbsp;&nbsp;<";
-//            Pattern patternNumberITC = Pattern.compile(stringPatternITC);
-//            Matcher matcherNumberITC = patternNumberITC.matcher(buf);
-//            if (matcherNumberITC.find()) {
-//                catalogNumberITC = matcherNumberITC.group(1);
-//            }
-//            //Log.i("!@#", catalogNumberITC);
-//
-//
-//            String stringPatternSK = "СК:</font>(.*?)</TD></TR></table>";
-//            Pattern patternNumberSK = Pattern.compile(stringPatternSK);
-//            Matcher matcherNumberSK = patternNumberSK.matcher(buf);
-//            if (matcherNumberSK.find()) {
-//                catalogNumberSK = matcherNumberSK.group(1).trim();
-//            }
-            // Log.i("!@#", catalogNumberSK);
+            stamp = new Stamp(idStamp, y , name, quantity, detailUrl);
+        }
 
-
-//            String bufPrice = "";
-//            String stringPatternPrice = "Цена *(.*?)руб.";
-//            Pattern patternPrice = Pattern.compile(stringPatternPrice);
-//            Matcher matcherPrice = patternPrice.matcher(buf);
-//            if (matcherPrice.find()) {
-//                bufPrice = matcherPrice.group(0);
-//            }
-//            stringPatternPrice = ":</font>(.*?)руб.";
-//            patternPrice = Pattern.compile(stringPatternPrice);
-//            matcherPrice = patternPrice.matcher(bufPrice);
-//            if (matcherPrice.find()) {
-//                price = matcherPrice.group(1).trim();
-//            }
-            // Log.i("!@#", price);
-
-
-        }  // end if (buf != null){
-        stamp = new Stamp(idStamp, Integer.parseInt(year), name, quantity, detailUrl);
         return stamp;
     }
 
@@ -331,14 +251,14 @@ public class NetworkUtils {
         String buf = "";
         //String stringPatternBuf = "Страна:</FONT>(.*?)</td></tr></table></td></tr></table><br></center></TD>";
         String stringPatternBuf = "Страна:</FONT>(.*?)</tr></table></td></tr></table><br></center></TD>";
-                               //      </a> </td><td></td> </tr></table></td></tr></table><br></center></TD>
+        //      </a> </td><td></td> </tr></table></td></tr></table><br></center></TD>
 
         Pattern patternBuf = Pattern.compile(stringPatternBuf);
         Matcher matcherBuf = patternBuf.matcher(data);
         if (matcherBuf.find()) {
             buf = matcherBuf.group(0);
         }
-       // Log.i("!@#", buf);
+        // Log.i("!@#", buf);
 
         String country = "";
         String stringPatternCountry = "Color=#003399>(.*?)</TD>";
@@ -366,15 +286,15 @@ public class NetworkUtils {
 
         String specifications = "";
         String stringSpecifications = "";
-        if (range.isEmpty()){                                                       //если период 1992-2020
+        if (range.isEmpty()) {                                                       //если период 1992-2020
             stringSpecifications = ">Тираж,.:</font>(.*?)&nbsp;&nbsp;<";
-        }else{
+        } else {
             stringSpecifications = ">Тираж, тыс.:</font>(.*?)</TD></TR><TR><TD";
         }
         Pattern patternSpecification = Pattern.compile(stringSpecifications);
         Matcher matcherSpecifications = patternSpecification.matcher(buf);
         if (matcherSpecifications.find()) {
-            specifications = matcherSpecifications.group(1);
+            specifications = matcherSpecifications.group(1).trim();
         }
 
         // -----перенесено из title parser
@@ -413,7 +333,7 @@ public class NetworkUtils {
         if (matcherNumberITC.find()) {
             catalogNumberITC = matcherNumberITC.group(1);
         }
-       //Log.i("!@#", catalogNumberITC);
+        //Log.i("!@#", catalogNumberITC);
 
 
         String stringPatternSK = "СК:</font>(.*?)</TD></TR></table>";

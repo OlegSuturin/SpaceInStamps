@@ -218,7 +218,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         setContentView(R.layout.activity_detail_stamp);
         ActionBar actionBar = getSupportActionBar();
         if(actionBar!=null){
-            actionBar.hide();
+            actionBar.setTitle("Детальная информация:");
         }
 
         List<Stamp> stamps = new ArrayList<>();

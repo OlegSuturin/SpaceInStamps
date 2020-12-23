@@ -68,20 +68,34 @@ public class ScaledImageActivity extends AppCompatActivity  {
      private RemoteMediaClient remoteMediaClient;
      private MediaRouteButton mMediaRouteButton;
 
-    private final SessionManagerListener mSessionManagerListener =
-            new SessionManagerListenerImpl();
+    private final SessionManagerListener mSessionManagerListener =   new SessionManagerListenerImpl();
 
-    private class SessionManagerListenerImpl implements SessionManagerListener {        //слушатель событий Хромкаста
+
+    //слушатель событий Хромкаста--------------------------------------------------------------------------------
+
+    private class SessionManagerListenerImpl implements SessionManagerListener {
         @Override
         public void onSessionStarting(Session session) {
-          //  Toast.makeText(ScaledImageActivity.this, "Starting", Toast.LENGTH_SHORT).show();
-          //  remoteMediaClient.load(mediaInfo);
+
         }
 
         @Override
         public void onSessionStarted(Session session, String s) {
 
             invalidateOptionsMenu();
+
+            mCastSession = mSessionManager.getCurrentCastSession();
+            if(mCastSession!=null){
+                imageMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);    //определяем метаданные мультимедиа материала
+                mediaInfo = new MediaInfo.Builder(url)                      //определяем тип данных и создаем мультимедийный экземпляр
+                        .setStreamType(MediaInfo.STREAM_TYPE_NONE)
+                        .setContentType("image/*")
+                        .setMetadata(imageMetadata)
+                        .build();
+
+                remoteMediaClient = mCastSession.getRemoteMediaClient();   // Инициализируем объект фреймворка для работы с хромкастом CastContext - коордириет все взаймодействия с фреймворком
+                remoteMediaClient.load(new MediaLoadRequestData.Builder().setMediaInfo(mediaInfo).build());
+            }
 
         }
 
@@ -120,7 +134,7 @@ public class ScaledImageActivity extends AppCompatActivity  {
         }
     };
 
-    //------------------------------------------------menu
+    //------------------------------------------------menu----------------------
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -136,24 +150,24 @@ public class ScaledImageActivity extends AppCompatActivity  {
 
         switch (idMenu) {
 
-            case R.id.item_my_cast:
-
-                 mCastSession = mSessionManager.getCurrentCastSession();
-                if(mCastSession!=null){
-                    imageMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);    //определяем метаданные мультимедиа материала
-                    mediaInfo = new MediaInfo.Builder(url)                      //определяем тип данных и создаем мультимедийный экземпляр
-                            .setStreamType(MediaInfo.STREAM_TYPE_NONE)
-                            .setContentType("image/*")
-                            .setMetadata(imageMetadata)
-                            .build();
-
-                    remoteMediaClient = mCastSession.getRemoteMediaClient();   // Инициализируем объект фреймворка для работы с хромкастом CastContext - коордириет все взаймодействия с фреймворком
-                    remoteMediaClient.load(new MediaLoadRequestData.Builder().setMediaInfo(mediaInfo).build());
-                }else{
-                    Toast.makeText(this, "mCastSession == null", Toast.LENGTH_SHORT).show();
-                }
-
-                break;
+//            case R.id.item_my_cast:   //своя кнопка каст для теста
+//
+//                 mCastSession = mSessionManager.getCurrentCastSession();
+//                if(mCastSession!=null){
+//                    imageMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);    //определяем метаданные мультимедиа материала
+//                    mediaInfo = new MediaInfo.Builder(url)                      //определяем тип данных и создаем мультимедийный экземпляр
+//                            .setStreamType(MediaInfo.STREAM_TYPE_NONE)
+//                            .setContentType("image/*")
+//                            .setMetadata(imageMetadata)
+//                            .build();
+//
+//                    remoteMediaClient = mCastSession.getRemoteMediaClient();   // Инициализируем объект фреймворка для работы с хромкастом CastContext - коордириет все взаймодействия с фреймворком
+//                    remoteMediaClient.load(new MediaLoadRequestData.Builder().setMediaInfo(mediaInfo).build());
+//                }else{
+//                    Toast.makeText(this, "mCastSession == null", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                break;
 
             case R.id.media_route_menu_item:       //ChromeCast изображения на ТВ
 
@@ -210,6 +224,9 @@ public class ScaledImageActivity extends AppCompatActivity  {
     protected void onResume() {
             mCastSession = mSessionManager.getCurrentCastSession();    // получаем доступ к текущему активному сеансу
 
+//        File sdImageMainDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "stamp.jpg");
+//        boolean deleted = sdImageMainDirectory.delete();
+
         mSessionManager.addSessionManagerListener(mSessionManagerListener);
         super.onResume();
     }
@@ -244,20 +261,35 @@ public class ScaledImageActivity extends AppCompatActivity  {
         }).check();
 
 //----------------------------------------------------------------------------------------------
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setTitle("");
-//        }
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("");
+        }
 
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("url")) {
             url = intent.getStringExtra("url");
-            //Toast.makeText(this, url, Toast.LENGTH_SHORT).show();
         } else {
             finish();
         }
 
         Picasso.get().load(url).placeholder(R.drawable.placeholder).into(scaledImageView);
+
+//----------------------------------------------------------------------------- вывод марки на хромкаст
+        mCastSession = mSessionManager.getCurrentCastSession();
+            if(mCastSession!=null){
+                imageMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);    //определяем метаданные мультимедиа материала
+                mediaInfo = new MediaInfo.Builder(url)                      //определяем тип данных и создаем мультимедийный экземпляр
+                        .setStreamType(MediaInfo.STREAM_TYPE_NONE)
+                        .setContentType("image/*")
+                        .setMetadata(imageMetadata)
+                        .build();
+
+                remoteMediaClient = mCastSession.getRemoteMediaClient();   // Инициализируем объект фреймворка для работы с хромкастом CastContext - коордириет все взаймодействия с фреймворком
+                remoteMediaClient.load(new MediaLoadRequestData.Builder().setMediaInfo(mediaInfo).build());
+            }
+
+
     }
 
 }

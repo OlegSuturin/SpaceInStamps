@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static String range;
     public static final int RANGE_1857_1960 = 0;
     public static final int RANGE_1961_1991 = 1;
-    public static final int RANGE_1992_2020 = 2;
+    public static final int RANGE_1992_2021 = 2;
 
 
     private static int methodOfSort = 1;
@@ -80,8 +80,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private LiveData<List<Stamp>> stampsFromLiveData;
     private static int exitCount = 0;
-
-
 
 
     //--------------------------------menu---------------------------------------------
@@ -152,8 +150,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         progressBarLoading = findViewById(R.id.progressBarLoading);
         spinnerYearSelect = findViewById(R.id.spinnerYearSelect);
 
+        spinnerRangeSelect.setSelection(1);
+
        // onClickSortByTheme(textViewSortByTheme);    //сортировка по умолчанию - По теме
         editTextSearchKeyword.setSelected(false);       //Остановить EditText от получения фокуса при запуске Activity
+        spinnerThemeSelect.setSelection(5);
+
+
 
         adapter = new StampAdapter();
         recyclerViewTitle.setLayoutManager(new LinearLayoutManager(this));
@@ -179,10 +182,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         yearEnd = 1991;
                         themeVisible(true);
                         break;
-                    case RANGE_1992_2020:
+                    case RANGE_1992_2021:
                         range = "";
                         yearStart = 1992;
-                        yearEnd = 2020;
+                        yearEnd = 2021;
                         themeVisible(true);
                         break;
                     default:
@@ -302,7 +305,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 adapter.setStamps(stamps);
             }
         });
-        // methodOfSort = SORT_BY_THEME;
+        //methodOfSort = SORT_BY_THEME;
+
+
 
     }//end of onCreate
 
@@ -366,8 +371,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Stamp stamp;
             int idStamp = recordsNumberG * (-1);
             stamp = NetworkUtils.parserTitlesSingleStamp(data, idStamp, range);
-            stamps.add(stamp);
-            recordsNumberG = 1;
+
+            if (stamp != null) {
+                stamps.add(stamp);
+                recordsNumberG = 1;
+            } else {
+                recordsNumberG = 0;
+            }
+
         } else {
             stamps = NetworkUtils.parserTitlesStamp(data);
         }
@@ -402,14 +413,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             years.add(Integer.toString(i));
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, years);
-        // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerYearSelect.setAdapter(adapter);
     }
 
     public void initSpinnerThemeSelect() {
         exitCount = 0;
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.themes_array_string, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerThemeSelect.setAdapter(adapter);
+        spinnerThemeSelect.setSelection(5);
     }
 
 
@@ -483,11 +496,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
-    void themeVisible(boolean flag){
-        if(flag){  // тема видима
+    void themeVisible(boolean flag) {
+        if (flag) {  // тема видима
             onClickSortByTheme(textViewSortByTheme);
             textViewSortByTheme.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             onClickSortByYear(textViewSortByYear);
             textViewSortByTheme.setVisibility(View.INVISIBLE);
         }
