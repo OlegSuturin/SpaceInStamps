@@ -2,7 +2,9 @@ package com.oliverst.spaceinstamps;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,6 +35,7 @@ import com.oliverst.spaceinstamps.data.MainViewModel;
 import com.oliverst.spaceinstamps.data.Stamp;
 import com.oliverst.spaceinstamps.utils.NetworkUtils;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TextView textViewSortByTheme;
     private TextView textViewSortByYear;
     private TextView textViewSortByKeyword;
+    private ConstraintLayout constraintLayoutLogo;
+    private ConstraintLayout constraintLayoutMain;
 
     private EditText editTextSearchKeyword;
     private ImageView imageViewSearchKeyword;
@@ -80,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private LiveData<List<Stamp>> stampsFromLiveData;
     private static int exitCount = 0;
+    private static int searchCount =0;
 
 
     //--------------------------------menu---------------------------------------------
@@ -114,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if (data != null && data.hasExtra("page")) {
             int page = data.getIntExtra("page", -1);
-            Toast.makeText(this, "" + page, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "" + page, Toast.LENGTH_SHORT).show();
             pageG = page;
             List<Stamp> stamps = stampsFromLiveData.getValue();
             adapter.setStamps(stamps);
@@ -128,6 +136,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             exitCount++;
             return;
         }
+        //удаляем временный файл
+        File sdImageMainDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "stamp.jpg");
+        boolean deleted = sdImageMainDirectory.delete();
+
         System.exit(0);
         super.onBackPressed();
     }
@@ -136,6 +148,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        constraintLayoutLogo = findViewById(R.id.constraintLayoutLogo);
+        constraintLayoutMain = findViewById(R.id.constraintLayoutMain);
 
         textViewSortByTheme = findViewById(R.id.textViewSortByTheme);
         textViewSortByYear = findViewById(R.id.textViewSortByYear);
@@ -192,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 }
 
-                Toast.makeText(MainActivity.this, range, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(MainActivity.this, range, Toast.LENGTH_SHORT).show();
 
             }
 
@@ -307,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
         //methodOfSort = SORT_BY_THEME;
 
-
+        viewLogo(3);
 
     }//end of onCreate
 
@@ -362,9 +377,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if (recordsNumberG < 0) {   //единичный результат
                 Toast.makeText(MainActivity.this, "Всего найдено: один", Toast.LENGTH_SHORT).show();
             } else {
+                if(searchCount != 0)  // в первый запуск
                 Toast.makeText(MainActivity.this, "Всего найдено: " + recordsNumberG, Toast.LENGTH_SHORT).show();
             }
         }
+        searchCount++;
         ArrayList<Stamp> stamps = new ArrayList<>();
         if (recordsNumberG < 0) {   //единичный результат
             //код обработки единичной формы
@@ -504,6 +521,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             onClickSortByYear(textViewSortByYear);
             textViewSortByTheme.setVisibility(View.INVISIBLE);
         }
+    }
+
+    void viewLogo(int sec){
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.hide();
+        }
+        CountDownTimer countDownTimer = new CountDownTimer(sec*1000, sec*1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+            @Override
+            public void onFinish() {
+                if(actionBar!=null){
+                    actionBar.show();
+                }
+                constraintLayoutLogo.setVisibility(View.INVISIBLE);
+                constraintLayoutMain.setVisibility(View.VISIBLE);
+            }
+        };
+            countDownTimer.start();
     }
 
 }

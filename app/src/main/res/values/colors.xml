@@ -13,4 +13,5 @@
     <color name="gray_600">#FF757575</color>
     <color name="main_blue_light">#FFE8EBEF</color>
     <color name="main_blue_light2">#FFB3BBCC</color>
+    <color name="very_darker_gray">#FF303030</color>
 </resources>

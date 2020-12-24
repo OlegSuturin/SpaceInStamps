@@ -258,7 +258,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             keyword = intent.getStringExtra("keyword");
             range = intent.getStringExtra("range");
 
-            Toast.makeText(this, "FT: " + favouriteTag, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "FT: " + favouriteTag, Toast.LENGTH_SHORT).show();
         } else {
             finish();               //  закрываем активность, если что то не так
         }
@@ -330,7 +330,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         setOnReachEndListener(new OnReachEndListener() {   //догрузка данных
             @Override
             public void onReachEnd() {
-                Toast.makeText(DetailStampActivity.this, "Достижение конца списка " + page, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(DetailStampActivity.this, "Достижение конца списка " + page, Toast.LENGTH_SHORT).show();
                 if (!isLoading) {   //если процесс загрузки не идет
                     downLoadData();
                 }
