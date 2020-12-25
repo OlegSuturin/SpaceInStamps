@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.oliverst.spaceinstamps.utils.ScaledImageView
+        <com.oliverst.russianstamps.utils.ScaledImageView
             android:id="@+id/scaledImageView"
             style="@style/Widget.Theme.SpaceInStamps.MyView"
             android:layout_width="match_parent"

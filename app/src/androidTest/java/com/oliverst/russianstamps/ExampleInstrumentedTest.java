@@ -1,4 +1,4 @@
-package com.oliverst.spaceinstamps;
+package com.oliverst.russianstamps;
 
 import android.content.Context;
 

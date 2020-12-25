@@ -1,4 +1,4 @@
-package com.oliverst.spaceinstamps.data;
+package com.oliverst.russianstamps.data;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -7,7 +7,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Dao

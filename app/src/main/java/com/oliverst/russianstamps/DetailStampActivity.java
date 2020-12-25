@@ -1,4 +1,4 @@
-package com.oliverst.spaceinstamps;
+package com.oliverst.russianstamps;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,27 +13,23 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.oliverst.spaceinstamps.adapters.ImagesAdapter;
-import com.oliverst.spaceinstamps.data.FavouriteImageURL;
-import com.oliverst.spaceinstamps.data.FavouriteStamp;
-import com.oliverst.spaceinstamps.data.ImageUrl;
-import com.oliverst.spaceinstamps.data.MainViewModel;
-import com.oliverst.spaceinstamps.data.Stamp;
-import com.oliverst.spaceinstamps.utils.NetworkUtils;
+import com.oliverst.russianstamps.adapters.ImagesAdapter;
+import com.oliverst.russianstamps.data.FavouriteImageURL;
+import com.oliverst.russianstamps.data.FavouriteStamp;
+import com.oliverst.russianstamps.data.ImageUrl;
+import com.oliverst.russianstamps.data.MainViewModel;
+import com.oliverst.russianstamps.data.Stamp;
+import com.oliverst.russianstamps.utils.NetworkUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -51,6 +47,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     private int year;
     private String keyword;
     private String range;
+    private String theme;
 
     private TextView textViewCountryInfo;
     private TextView textViewYearInfo;
@@ -101,31 +98,6 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         super.onBackPressed();
     }
 
-    //------------------------------------------------menu
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.main_menu, menu);
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        int idMenu = item.getItemId();
-//        switch (idMenu) {
-//            case R.id.itemExit:
-//                Intent intent = new Intent(this, MainActivity.class);
-//                startActivity(intent);
-//                break;
-//            case R.id.itemFavourite:
-//                Intent intentToFavourite = new Intent(this, FavouriteActivity.class);
-//                startActivity(intentToFavourite);
-//                //  startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-//-------------------------------------------------------------
-
     //----------------------------------loader-------------------------------------
     @NonNull
     @Override
@@ -168,7 +140,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         URL url = null;
         switch (methodOfSort) {
             case MainActivity.SORT_BY_THEME:
-                url = NetworkUtils.buildURL(positionTheme, page, range);
+                url = NetworkUtils.buildURL(theme, page, range);
                 break;
             case MainActivity.SORT_BY_YEAR:
                 url = NetworkUtils.buildURLByYear(year, page, range);
@@ -209,6 +181,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         outState.putInt("year", year);
         outState.putString("keyword", keyword);
         outState.putString("range", range);
+        outState.putString("theme", theme);
         super.onSaveInstanceState(outState);
     }
 
@@ -238,9 +211,10 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         imageViewHeart = findViewById((R.id.imageViewHeart));
         textViewNumberOfPics = findViewById(R.id.textViewNumberOfPics);
 
-
         adapter = new ImagesAdapter();
         recyclerViewImagesInfo = findViewById(R.id.recyclerViewImagesInfo);
+        recyclerViewImagesInfo.setNestedScrollingEnabled(false);
+
         textViewNumRecord = findViewById(R.id.textViewNumRecord);
         progressBarLoadingOnDetail = findViewById(R.id.progressBarLoadingOnDetail);
 
@@ -257,6 +231,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             year = intent.getIntExtra("year", -1);
             keyword = intent.getStringExtra("keyword");
             range = intent.getStringExtra("range");
+            theme = intent.getStringExtra("theme");
 
            // Toast.makeText(this, "FT: " + favouriteTag, Toast.LENGTH_SHORT).show();
         } else {
@@ -275,6 +250,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             year = savedInstanceState.getInt("year");
             keyword = savedInstanceState.getString("keyword");
             range = savedInstanceState.getString("range");
+            theme = savedInstanceState.getString("theme");
         }
 
         loaderManager = LoaderManager.getInstance(this);
@@ -465,7 +441,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             id--;
             currentNum--;
             imageViewLeft.setImageResource(R.drawable.left_on);
-            handler.postDelayed(runnableL, 750);
+           handler.postDelayed(runnableL, 350);
         } else {
             Toast.makeText(this, "Начало списка", Toast.LENGTH_SHORT).show();
             applyDetail();
@@ -500,7 +476,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             id++;
             currentNum++;
             imageViewRight.setImageResource(R.drawable.right_on);
-            handler.postDelayed(runnableR, 750);
+            handler.postDelayed(runnableR, 350);
         } else {
             Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT).show();
             applyDetail();
@@ -557,8 +533,5 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         setColorHeart();
     }
 
-    public void runTimerRight(){
-
-    }
 
 }

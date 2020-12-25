@@ -1,8 +1,7 @@
-package com.oliverst.spaceinstamps.data;
+package com.oliverst.russianstamps.data;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
 
 @Entity(tableName = "favourite_stamp")
 public class FavouriteStamp extends Stamp {

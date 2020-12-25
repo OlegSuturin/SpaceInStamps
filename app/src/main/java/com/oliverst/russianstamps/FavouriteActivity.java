@@ -1,4 +1,4 @@
-package com.oliverst.spaceinstamps;
+package com.oliverst.russianstamps;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,12 +15,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.oliverst.spaceinstamps.adapters.StampAdapter;
-import com.oliverst.spaceinstamps.data.FavouriteStamp;
-import com.oliverst.spaceinstamps.data.MainViewModel;
-import com.oliverst.spaceinstamps.data.Stamp;
+import com.oliverst.russianstamps.adapters.StampAdapter;
+import com.oliverst.russianstamps.data.FavouriteStamp;
+import com.oliverst.russianstamps.data.MainViewModel;
+import com.oliverst.russianstamps.data.Stamp;
 
 import java.util.ArrayList;
 import java.util.List;

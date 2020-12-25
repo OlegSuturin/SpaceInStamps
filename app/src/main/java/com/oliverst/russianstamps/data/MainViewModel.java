@@ -1,4 +1,4 @@
-package com.oliverst.spaceinstamps.data;
+package com.oliverst.russianstamps.data;
 
 import android.app.Application;
 import android.os.AsyncTask;

@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.oliverst.spaceinstamps">
+    package="com.oliverst.russianstamps">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 
     <application
         android:allowBackup="true"
+        android:grantUriPermissions="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SpaceInStamps"
-        android:usesCleartextTraffic="true"
-        android:grantUriPermissions="true"
-        android:requestLegacyExternalStorage = "true"
-        >
+        android:usesCleartextTraffic="true">
+
+
 
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="com.oliverst.spaceinstamps.CastOptionsProvider" />
+            android:value="com.oliverst.russianstamps.CastOptionsProvider" />
 
-
-         <provider
+        <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.fileprovider"
+            android:authorities="com.oliverst.russianstamps.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -36,20 +35,26 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ScaledImageActivity" />
-        <activity android:name=".FavouriteActivity" />
-        <activity android:name=".DetailStampActivity" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name="com.oliverst.russianstamps.AboutActivity" />
+        <activity
+            android:name="com.oliverst.russianstamps.ScaledImageActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name="com.oliverst.russianstamps.FavouriteActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name="com.oliverst.russianstamps.DetailStampActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name="com.oliverst.russianstamps.MainActivity"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-
-
     </application>
 
 </manifest>

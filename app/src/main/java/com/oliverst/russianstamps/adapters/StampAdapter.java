@@ -1,4 +1,4 @@
-package com.oliverst.spaceinstamps.adapters;
+package com.oliverst.russianstamps.adapters;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -9,8 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.oliverst.spaceinstamps.R;
-import com.oliverst.spaceinstamps.data.Stamp;
+import com.oliverst.russianstamps.R;
+import com.oliverst.russianstamps.data.Stamp;
 
 import java.util.ArrayList;
 import java.util.List;

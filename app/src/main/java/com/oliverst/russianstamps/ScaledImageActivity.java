@@ -1,29 +1,21 @@
-package com.oliverst.spaceinstamps;
+package com.oliverst.russianstamps;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.FragmentActivity;
 import androidx.mediarouter.app.MediaRouteButton;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaLoadRequestData;
 import com.google.android.gms.cast.MediaMetadata;
@@ -34,28 +26,20 @@ import com.google.android.gms.cast.framework.Session;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
-import com.google.android.gms.common.images.WebImage;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.oliverst.spaceinstamps.utils.ScaledImageView;
+import com.oliverst.russianstamps.utils.ScaledImageView;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
-import com.oliverst.spaceinstamps.CastOptionsProvider;
-import static android.os.Environment.DIRECTORY_PICTURES;
 
 public class ScaledImageActivity extends AppCompatActivity  {
     private String url;
@@ -150,37 +134,10 @@ public class ScaledImageActivity extends AppCompatActivity  {
 
         switch (idMenu) {
 
-//            case R.id.item_my_cast:   //своя кнопка каст для теста
-//
-//                 mCastSession = mSessionManager.getCurrentCastSession();
-//                if(mCastSession!=null){
-//                    imageMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);    //определяем метаданные мультимедиа материала
-//                    mediaInfo = new MediaInfo.Builder(url)                      //определяем тип данных и создаем мультимедийный экземпляр
-//                            .setStreamType(MediaInfo.STREAM_TYPE_NONE)
-//                            .setContentType("image/*")
-//                            .setMetadata(imageMetadata)
-//                            .build();
-//
-//                    remoteMediaClient = mCastSession.getRemoteMediaClient();   // Инициализируем объект фреймворка для работы с хромкастом CastContext - коордириет все взаймодействия с фреймворком
-//                    remoteMediaClient.load(new MediaLoadRequestData.Builder().setMediaInfo(mediaInfo).build());
-//                }else{
-//                    Toast.makeText(this, "mCastSession == null", Toast.LENGTH_SHORT).show();
-//                }
-//
-//                break;
 
             case R.id.media_route_menu_item:       //ChromeCast изображения на ТВ
 
-                imageMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);    //определяем метаданные мультимедиа материала
-                MediaInfo mediaInfo = new MediaInfo.Builder(url)                      //определяем тип данных и создаем мультимедийный экземпляр
-                        .setStreamType(MediaInfo.STREAM_TYPE_NONE)
-                        .setContentType("image/*")
-                        .setMetadata(imageMetadata)
-                        .build();
-                mCastSession = mSessionManager.getCurrentCastSession();
-                remoteMediaClient = mCastSession.getRemoteMediaClient();   //Используется RemoteMediaClientдля для воспроизведения, паузы и иного управления приложением мультимедийного проигрывателя, запущенным в Web Receiver.
-                remoteMediaClient.load(mediaInfo);
-                break;
+                //логика в слушателе
 
             case R.id.itemToShare:         //поделиться изображением через соцсеть
                 boolean b = false;
@@ -197,22 +154,24 @@ public class ScaledImageActivity extends AppCompatActivity  {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
                 try {
-                    fOut.flush();
-                    fOut.close();
+                    if(fOut!=null){
+                        fOut.flush();
+                        fOut.close();
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setType("image/jpeg");
+                        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                        Uri uri = FileProvider.getUriForFile(this, "com.oliverst.russianstamps.fileprovider", sdImageMainDirectory);
+
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        startActivity(Intent.createChooser(shareIntent, "Share with"));
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("image/jpeg");
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-                Uri uri = FileProvider.getUriForFile(this, "com.example.fileprovider", sdImageMainDirectory);
-
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                startActivity(Intent.createChooser(shareIntent, "Share with"));
 
                 break;
             default:
@@ -223,9 +182,6 @@ public class ScaledImageActivity extends AppCompatActivity  {
     @Override
     protected void onResume() {
             mCastSession = mSessionManager.getCurrentCastSession();    // получаем доступ к текущему активному сеансу
-
-//        File sdImageMainDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "stamp.jpg");
-//        boolean deleted = sdImageMainDirectory.delete();
 
         mSessionManager.addSessionManagerListener(mSessionManagerListener);
         super.onResume();

@@ -25,6 +25,7 @@
     </style>
     <style name="TextDataStyle">
         <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textSize">16sp</item>
     </style>
     <style name="LineStyle">
         <item name="android:background">@color/very_darker_gray</item>

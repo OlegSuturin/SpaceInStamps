@@ -1,4 +1,4 @@
-package com.oliverst.spaceinstamps;
+package com.oliverst.russianstamps;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,20 +26,21 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.oliverst.spaceinstamps.adapters.StampAdapter;
-import com.oliverst.spaceinstamps.data.MainViewModel;
-import com.oliverst.spaceinstamps.data.Stamp;
-import com.oliverst.spaceinstamps.utils.NetworkUtils;
+import com.oliverst.russianstamps.adapters.StampAdapter;
+import com.oliverst.russianstamps.data.MainViewModel;
+import com.oliverst.russianstamps.data.Stamp;
+import com.oliverst.russianstamps.utils.NetworkUtils;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
+                                    //AppCompatActivity
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
 
     private Spinner spinnerRangeSelect;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static final int SORT_BY_THEME = 1;
     public static final int SORT_BY_YEAR = 2;
     public static final int SORT_BY_KEYWORD = 3;
+
 
     private TextView textViewSortByTheme;
     private TextView textViewSortByYear;
@@ -111,6 +113,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case R.id.itemExit:
                 System.exit(0);
                 break;
+            case R.id.itemAbout:
+                Intent intentAbout = new Intent(this, AboutActivity.class);
+                startActivity(intentAbout);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -149,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         constraintLayoutLogo = findViewById(R.id.constraintLayoutLogo);
         constraintLayoutMain = findViewById(R.id.constraintLayoutMain);
 
@@ -165,11 +171,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         progressBarLoading = findViewById(R.id.progressBarLoading);
         spinnerYearSelect = findViewById(R.id.spinnerYearSelect);
 
-        spinnerRangeSelect.setSelection(1);
+        spinnerRangeSelect.setSelection(1);  // установка периода по умолчанию
 
        // onClickSortByTheme(textViewSortByTheme);    //сортировка по умолчанию - По теме
         editTextSearchKeyword.setSelected(false);       //Остановить EditText от получения фокуса при запуске Activity
-        spinnerThemeSelect.setSelection(5);
+
 
 
 
@@ -227,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 pageG = 1;
                 recordsNumberG = 0;
                 if (!isLoading) {   //если процесс загрузки не идет
-                    downLoadData(position);
+                    downLoadData();
                 }
             }
 
@@ -248,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     recordsNumberG = 0;
                     // Log.i("!@#", "y:" + year);
                     if (!isLoading) {   //если процесс загрузки не идет
-                        downLoadData(year);
+                        downLoadData();
                     }
                 }
                 flagNoInitYear = true;
@@ -283,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     intent.putExtra("year", year);
                     intent.putExtra("keyword", keyword);
                     intent.putExtra("range", range);
+                    intent.putExtra("theme", theme);
                     startActivityForResult(intent, RESULT_FIRST_USER);
                 }
             }
@@ -298,15 +305,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     switch (methodOfSort) {
                         case SORT_BY_THEME:
                             int position = spinnerThemeSelect.getSelectedItemPosition();
-                            downLoadData(position);
+                            theme = (String) spinnerThemeSelect.getSelectedItem();
+                            downLoadData();
                             break;
                         case SORT_BY_YEAR:
                             year = Integer.parseInt((String) spinnerYearSelect.getSelectedItem());
-                            downLoadData(year);
+                            downLoadData();
                             break;
                         case SORT_BY_KEYWORD:
                             keyword = editTextSearchKeyword.getText().toString();
-                            downLoadData(-1);
+                            downLoadData();
                             break;
                     }
                     // Toast.makeText(MainActivity.this, "pageG: "+ pageG, Toast.LENGTH_SHORT).show();
@@ -326,15 +334,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }//end of onCreate
 
-    private void downLoadData(int position) {
+    private void downLoadData() {
         Bundle bundle = new Bundle();
         URL url = null;
         switch (methodOfSort) {
             case SORT_BY_THEME:
-                url = NetworkUtils.buildURL(position, pageG, range);
+                url = NetworkUtils.buildURL(theme, pageG, range);
                 break;
             case SORT_BY_YEAR:
-                url = NetworkUtils.buildURLByYear(position, pageG, range);
+                url = NetworkUtils.buildURLByYear(year, pageG, range);
                 break;
             case SORT_BY_KEYWORD:
                 url = NetworkUtils.buildURLByKeyword(keyword, pageG, range);
@@ -439,7 +447,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.themes_array_string, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerThemeSelect.setAdapter(adapter);
-        spinnerThemeSelect.setSelection(5);
+        spinnerThemeSelect.setSelection(0);
     }
 
 
@@ -508,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             pageG = 1;
             recordsNumberG = 0;
             if (!isLoading) {   //если процесс загрузки не идет
-                downLoadData(-1);
+                downLoadData();
             }
         }
     }

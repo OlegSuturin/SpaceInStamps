@@ -1,4 +1,4 @@
-package com.oliverst.spaceinstamps.utils;
+package com.oliverst.russianstamps.utils;
 
 
 import android.content.Context;
@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.loader.content.AsyncTaskLoader;
 
-import com.oliverst.spaceinstamps.data.Stamp;
+import com.oliverst.russianstamps.data.Stamp;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -194,7 +194,7 @@ public class NetworkUtils {
         String buf = "";
         String stringPatternBuf = "Страна:</FONT>(.*?)</tr></table><br></center></TD>";
 
-            //String stringPatternBuf = "Страна:</FONT>(.*?)</td></tr></table></td></tr></table><br></center></TD>";
+        //String stringPatternBuf = "Страна:</FONT>(.*?)</td></tr></table></td></tr></table><br></center></TD>";
 
         Pattern patternBuf = Pattern.compile(stringPatternBuf);
         Matcher matcherBuf = patternBuf.matcher(data);
@@ -214,7 +214,7 @@ public class NetworkUtils {
                 year = matcherYear.group(1);
             }
 
-                Log.i("!@#", year);
+            Log.i("!@#", year);
 
             String stringPatternQuantity = "Кол. марок:</FONT>&nbsp;&nbsp;<Font face=\"Verdana, Arial, Helvetica\" Size=2 Color=#003399>(.*?)</TD>";
             Pattern patternQuantity = Pattern.compile(stringPatternQuantity);
@@ -235,11 +235,11 @@ public class NetworkUtils {
             Log.i("!@#", name);
 
             int y = 0;
-            if (!year.isEmpty()){
+            if (!year.isEmpty()) {
                 y = Integer.parseInt(year);
             }
 
-            stamp = new Stamp(idStamp, y , name, quantity, detailUrl);
+            stamp = new Stamp(idStamp, y, name, quantity, detailUrl);
         }
 
         return stamp;
@@ -370,62 +370,75 @@ public class NetworkUtils {
     }
 
     //МЕТОД, ФОРМИРУЕТ СТРОКУ ЗАПРОСА URL - по теме
-    public static URL buildURL(int themeNumber, int page, String range) {
+    public static URL buildURL(String theme, int page, String range) {
         String urlString;
         URL urlResult = null;
 
-        switch (themeNumber) {
-            case COSMOS:
-                urlString = String.format(searchBaseUrl, range, THEME_COSMOS, page);
-                break;
-            case FLORA:
-                urlString = String.format(searchBaseUrl, range, THEME_FLORA, page);
-                break;
-            case FAUNA:
-                urlString = String.format(searchBaseUrl, range, THEME_FAUNA, page);
-                break;
-            case SPORT:
-                urlString = String.format(searchBaseUrl, range, THEME_SPORT, page);
-                break;
-            case OLYMPIC:
-                urlString = String.format(searchBaseUrl, range, THEME_OLYMPIC, page);
-                break;
-            case NEW_YEAR:
-                urlString = String.format(searchBaseUrl, range, THEME_NEW_YEAR, page);
-                break;
-            case ART:
-                urlString = String.format(searchBaseUrl, range, THEME_ART, page);
-                break;
-            case ARCHITECTURE:
-                urlString = String.format(searchBaseUrl, range, THEME_ARCHITECTURE, page);
-                break;
-            case HISTORY:
-                urlString = String.format(searchBaseUrl, range, THEME_HISTORY, page);
-                break;
-            case WAR:
-                urlString = String.format(searchBaseUrl, range, THEME_WAR, page);
-                break;
-            case SYMBOLS:
-                urlString = String.format(searchBaseUrl, range, THEME_SYMBOLS, page);
-                break;
-            case AUTO:
-                urlString = String.format(searchBaseUrl, range, THEME_AUTO, page);
-                break;
-            case AVIATION:
-                urlString = String.format(searchBaseUrl, range, THEME_AVIATION, page);
-                break;
-            case BOATS:
-                urlString = String.format(searchBaseUrl, range, THEME_BOATS, page);
-                break;
-
-            default:
-                urlString = "";
-        }
+        //String theme = "Космос";
         try {
+            String encodeTheme = URLEncoder.encode(theme, "windows-1251");
+            urlString = String.format(searchBaseUrl, range, encodeTheme, page);
             urlResult = new URL(urlString);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+
+
+//        switch (themeNumber) {
+//            case COSMOS:
+//                urlString = String.format(searchBaseUrl, range, THEME_COSMOS, page);
+//                break;
+//            case FLORA:
+//                urlString = String.format(searchBaseUrl, range, THEME_FLORA, page);
+//                break;
+//            case FAUNA:
+//                urlString = String.format(searchBaseUrl, range, THEME_FAUNA, page);
+//                break;
+//            case SPORT:
+//                urlString = String.format(searchBaseUrl, range, THEME_SPORT, page);
+//                break;
+//            case OLYMPIC:
+//                urlString = String.format(searchBaseUrl, range, THEME_OLYMPIC, page);
+//                break;
+//            case NEW_YEAR:
+//                urlString = String.format(searchBaseUrl, range, THEME_NEW_YEAR, page);
+//                break;
+//            case ART:
+//                urlString = String.format(searchBaseUrl, range, THEME_ART, page);
+//                break;
+//            case ARCHITECTURE:
+//                urlString = String.format(searchBaseUrl, range, THEME_ARCHITECTURE, page);
+//                break;
+//            case HISTORY:
+//                urlString = String.format(searchBaseUrl, range, THEME_HISTORY, page);
+//                break;
+//            case WAR:
+//                urlString = String.format(searchBaseUrl, range, THEME_WAR, page);
+//                break;
+//            case SYMBOLS:
+//                urlString = String.format(searchBaseUrl, range, THEME_SYMBOLS, page);
+//                break;
+//            case AUTO:
+//                urlString = String.format(searchBaseUrl, range, THEME_AUTO, page);
+//                break;
+//            case AVIATION:
+//                urlString = String.format(searchBaseUrl, range, THEME_AVIATION, page);
+//                break;
+//            case BOATS:
+//                urlString = String.format(searchBaseUrl, range, THEME_BOATS, page);
+//                break;
+//
+//            default:
+//                urlString = "";
+//        }
+//        try {
+//            urlResult = new URL(urlString);
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+
         return urlResult;
     }
 
@@ -463,9 +476,9 @@ public class NetworkUtils {
     }
 
     //----------------------------------------метод и класс заменены лоадером------------------------------------------------
-    public static String getStampsFromNetwork(int themeNumber, int page, String range) {
+    public static String getStampsFromNetwork(String theme, int page, String range) {
         String result = null;
-        URL url = buildURL(themeNumber, page, range);
+        URL url = buildURL(theme, page, range);
         //здесь запускаем загрузку в другом программном потоке
         DataLoadTask task = new DataLoadTask();
         try {
