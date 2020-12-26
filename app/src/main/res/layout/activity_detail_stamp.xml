@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/black"
+    android:paddingTop="8dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -60,30 +61,21 @@
         style="@style/TextDataStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guidelineNav"
         app:layout_constraintStart_toStartOf="@+id/guidelineNav"
         app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo" />
 
-    <ProgressBar
-        android:id="@+id/progressBarLoadingOnDetail"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewLeft"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:onClick="onClickLeft"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="48dp"
         android:layout_marginBottom="2dp"
+        android:contentDescription="@string/icon_to_left"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/imageViewRight"
         app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo"
@@ -96,6 +88,7 @@
         android:layout_marginBottom="2dp"
         android:layout_marginEnd="8dp"
         android:onClick="onClickRight"
+        android:contentDescription="@string/icon_to_right"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo"
@@ -108,9 +101,20 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="0dp"
         android:onClick="onClickChangeFavourite"
+        android:contentDescription="@string/icon_favourite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scrollViewInfo"
         app:srcCompat="@drawable/grayheart" />
 
+
+    <ProgressBar
+        android:id="@+id/progressBarLoadingOnDetail"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

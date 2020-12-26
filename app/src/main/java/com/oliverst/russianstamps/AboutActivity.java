@@ -24,9 +24,8 @@ public class AboutActivity extends AppCompatActivity {
     public void onClickToEmail(View view) {
 
         Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"oliverst@yandex.ru"});
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.email)});
         intent.setData(Uri.parse("mailto:"));
         startActivity(intent);
-
     }
 }

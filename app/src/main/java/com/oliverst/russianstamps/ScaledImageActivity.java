@@ -41,18 +41,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-public class ScaledImageActivity extends AppCompatActivity  {
+public class ScaledImageActivity extends AppCompatActivity {
     private String url;
     private ScaledImageView scaledImageView;
     private CastSession mCastSession;
     private SessionManager mSessionManager;
     private CastContext castContext;
-     private com.google.android.gms.cast.MediaMetadata  imageMetadata;
-   private MediaInfo mediaInfo;
-     private RemoteMediaClient remoteMediaClient;
-     private MediaRouteButton mMediaRouteButton;
+    private com.google.android.gms.cast.MediaMetadata imageMetadata;
+    private MediaInfo mediaInfo;
+    private RemoteMediaClient remoteMediaClient;
+    private MediaRouteButton mMediaRouteButton;
 
-    private final SessionManagerListener mSessionManagerListener =   new SessionManagerListenerImpl();
+    private final SessionManagerListener mSessionManagerListener = new SessionManagerListenerImpl();
 
 
     //слушатель событий Хромкаста--------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ public class ScaledImageActivity extends AppCompatActivity  {
             invalidateOptionsMenu();
 
             mCastSession = mSessionManager.getCurrentCastSession();
-            if(mCastSession!=null){
+            if (mCastSession != null) {
                 imageMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);    //определяем метаданные мультимедиа материала
                 mediaInfo = new MediaInfo.Builder(url)                      //определяем тип данных и создаем мультимедийный экземпляр
                         .setStreamType(MediaInfo.STREAM_TYPE_NONE)
@@ -116,7 +116,9 @@ public class ScaledImageActivity extends AppCompatActivity  {
         public void onSessionSuspended(Session session, int i) {
 
         }
-    };
+    }
+
+    ;
 
     //------------------------------------------------menu----------------------
     @Override
@@ -156,7 +158,7 @@ public class ScaledImageActivity extends AppCompatActivity  {
                 }
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
                 try {
-                    if(fOut!=null){
+                    if (fOut != null) {
                         fOut.flush();
                         fOut.close();
                         Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -166,7 +168,7 @@ public class ScaledImageActivity extends AppCompatActivity  {
                         Uri uri = FileProvider.getUriForFile(this, "com.oliverst.russianstamps.fileprovider", sdImageMainDirectory);
 
                         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                        startActivity(Intent.createChooser(shareIntent, "Share with"));
+                        startActivity(Intent.createChooser(shareIntent, getString(R.string.label_share_with)));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -178,10 +180,11 @@ public class ScaledImageActivity extends AppCompatActivity  {
         }
         return super.onOptionsItemSelected(item);
     }
-//-----------------------------------------------------------------------------------------------------
+
+    //-----------------------------------------------------------------------------------------------------
     @Override
     protected void onResume() {
-            mCastSession = mSessionManager.getCurrentCastSession();    // получаем доступ к текущему активному сеансу
+        mCastSession = mSessionManager.getCurrentCastSession();    // получаем доступ к текущему активному сеансу
 
         mSessionManager.addSessionManagerListener(mSessionManagerListener);
         super.onResume();
@@ -196,7 +199,7 @@ public class ScaledImageActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        castContext  = CastContext.getSharedInstance(this);
+        castContext = CastContext.getSharedInstance(this);
         mSessionManager = CastContext.getSharedInstance(this).getSessionManager();
 
         super.onCreate(savedInstanceState);
@@ -233,17 +236,17 @@ public class ScaledImageActivity extends AppCompatActivity  {
 
 //----------------------------------------------------------------------------- вывод марки на хромкаст
         mCastSession = mSessionManager.getCurrentCastSession();
-            if(mCastSession!=null){
-                imageMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);    //определяем метаданные мультимедиа материала
-                mediaInfo = new MediaInfo.Builder(url)                      //определяем тип данных и создаем мультимедийный экземпляр
-                        .setStreamType(MediaInfo.STREAM_TYPE_NONE)
-                        .setContentType("image/*")
-                        .setMetadata(imageMetadata)
-                        .build();
+        if (mCastSession != null) {
+            imageMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);    //определяем метаданные мультимедиа материала
+            mediaInfo = new MediaInfo.Builder(url)                      //определяем тип данных и создаем мультимедийный экземпляр
+                    .setStreamType(MediaInfo.STREAM_TYPE_NONE)
+                    .setContentType("image/*")
+                    .setMetadata(imageMetadata)
+                    .build();
 
-                remoteMediaClient = mCastSession.getRemoteMediaClient();   // Инициализируем объект фреймворка для работы с хромкастом CastContext - коордириет все взаймодействия с фреймворком
-                remoteMediaClient.load(new MediaLoadRequestData.Builder().setMediaInfo(mediaInfo).build());
-            }
+            remoteMediaClient = mCastSession.getRemoteMediaClient();   // Инициализируем объект фреймворка для работы с хромкастом CastContext - коордириет все взаймодействия с фреймворком
+            remoteMediaClient.load(new MediaLoadRequestData.Builder().setMediaInfo(mediaInfo).build());
+        }
 
 
     }

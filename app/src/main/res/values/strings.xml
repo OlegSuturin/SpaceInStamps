@@ -2,7 +2,54 @@
     <string name="app_name">Русские марки</string>
     <string name="item_menu_main">Главная</string>
     <string name="item_menu_favourite">Избранное</string>
-    <string name="app_id">ID500</string>
+    <string name="item_clear_the_list">Очистить список</string>
+    <string name="item_about">О приложении</string>
+    <string name="item_exit">Выход</string>
+    <string name="item_cast">Cast</string>
+    <string name="item_share">Поделиться</string>
+    <string name="label_num" translatable="false">№</string>
+    <string name="label_year">Год</string>
+    <string name="label_name">Название выпуска</string>
+    <string name="label_quantity">Кол-во:</string>
+    <string name="label_country">Страна:</string>
+    <string name="label_year2">Год:</string>
+    <string name="label_name2">Название:</string>
+    <string name="label_quantity2">Кол-во марок:</string>
+    <string name="label_date_release">Дата выпуска:</string>
+    <string name="label_catalog_num">Каталог №:</string>
+    <string name="label_price">Оценка(руб.):</string>
+    <string name="label_specifications">Тираж (тыс.):</string>
+    <string name="label_overview">Описание:</string>
+    <string name="number_of_images">Количество изображений</string>
+    <string name="image_of_stamp">Изображение марки</string>
+    <string name="icon_glass">Пиктограмма лупы</string>
+    <string name="Logo">Логотип</string>
+    <string name="sort_by_theme">По теме</string>
+    <string name="sort_by_year">По году выпуска</string>
+    <string name="find_by_name">По названию</string>
+    <string name="hint_name_word">Название/слово</string>
+    <string name="icon_search">Пиктограмма поиска</string>
+    <string name="icon_to_left">Пиктограмма влево</string>
+    <string name="icon_to_right">Пиктограмма вправо</string>
+    <string name="icon_favourite">Пиктограмма избранное</string>
+    <string name="text_about">Приложение является некоммерческим продуктом (не содержит рекламы и платных услуг). Использованы материалы ресурса Филателия.RU</string>
+    <string name="contact_author_of_app">Связаться с автором приложения.</string>
+    <string name="label_share_with">Поделиться через:</string>
+    <string name="toast_find">Найдено:</string>
+    <string name="toast_find_one">Найдено: один</string>
+    <string name="toast_not_load">Данные не загружены</string>
+    <string name="toast_exit">Для выхода нажмите еще раз</string>
+    <string name="title_favourite">Избранное</string>
+    <string name="toast_delete_from_favourite">Удалено из избранного</string>
+    <string name="toast_add_in_favourite">Добавлено в избранное</string>
+    <string name="toast_data_not_find">Информация в БД не найдена!</string>
+    <string name="toast_end_of_list">Конец списка</string>
+    <string name="toast_start_of_list">Начало списка</string>
+    <string name="catalog_itc">ИТЦ:</string>
+    <string name="catalog_sk">СК:</string>
+    <string name="catalog_mich">Михель:</string>
+    <string name="from">из</string>
+    <string name="email" translatable="false">oliverst@yandex.ru</string>
     <string-array name="themes_array_string">
         <item>Космос</item>
         <item>Флора</item>
@@ -19,6 +66,23 @@
         <item>Авиация</item>
         <item>Корабли, флот</item>
     </string-array>
+    <string-array name="themes_array_code">
+        <item>%CA%EE%F1%EC%EE%F1</item>
+        <item>%D4%EB%EE%F0%E0</item>
+        <item>%F4%E0%F3%ED%E0</item>
+        <item>%D1%EF%EE%F0%F2</item>
+        <item>%CE%EB%E8%EC%EF%E8%E0%E4%E0</item>
+        <item>%CD%EE%E2%FB%E9%20%E3%EE%E4</item>
+        <item>%C8%F1%EA%F3%F1%F1%F2%E2%EE</item>
+        <item>%C0%F0%F5%E8%F2%E5%EA%F2%F3%F0%E0</item>
+        <item>%C8%F1%F2%EE%F0%E8%FF</item>
+        <item>%C2%EE%E9%ED%E0</item>
+        <item>%D1%E8%EC%E2%EE%EB%E8%EA%E0</item>
+        <item>%C0%E2%F2%EE</item>
+        <item>%C0%E2%E8%E0</item>
+        <item>%CA%EE%F0%E0%E1%EB%E8</item>
+    </string-array>
+
     <string-array name="year_array_string">
         <item>1961</item>
         <item>1962</item>
@@ -28,6 +92,5 @@
         <item>МАРКИ СССР 1961-1991</item>
         <item>МАРКИ РОССИЙСКАЯ ФЕДЕРАЦИЯ 1992-2021</item>
     </string-array>
-
 
 </resources>

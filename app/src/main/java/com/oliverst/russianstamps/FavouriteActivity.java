@@ -28,18 +28,15 @@ public class FavouriteActivity extends AppCompatActivity {
     private StampAdapter adapter;
     private RecyclerView recyclerViewTitle;
     private MainViewModel viewModel;
-    ArrayList<Stamp> stamps = new ArrayList<>();
-
+    private ArrayList<Stamp> stamps = new ArrayList<>();
     private LiveData<List<FavouriteStamp>> stampsFavouriteLD;
 
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
-        //startActivity(intent);
         setResult(RESULT_OK, intent);
         finish();
         super.onBackPressed();
-
     }
 
     //------------------------------------------------menu
@@ -56,7 +53,6 @@ public class FavouriteActivity extends AppCompatActivity {
         switch (idMenu) {
             case R.id.itemMain:
                 Intent intent = new Intent(this, MainActivity.class);
-                //startActivity(intent);
                 setResult(RESULT_OK, intent);
                 finish();
                 break;
@@ -73,14 +69,7 @@ public class FavouriteActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         finish();
-//    List<FavouriteStamp> stamps = stampsFavouriteLD.getValue();
-//    ArrayList<Stamp> favouriteStamps = new ArrayList<>();
-//    favouriteStamps.addAll(stamps);
-//    adapter.setStamps(favouriteStamps);
-//    adapter.notifyDataSetChanged();
-//    Toast.makeText(this, "Возврат", Toast.LENGTH_SHORT).show();
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +78,7 @@ public class FavouriteActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("Избранное");
+            actionBar.setTitle(R.string.title_favourite);
         }
 
         recyclerViewTitle = findViewById(R.id.recyclerViewTitle);
@@ -97,7 +86,6 @@ public class FavouriteActivity extends AppCompatActivity {
         recyclerViewTitle.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewTitle.setAdapter(adapter);
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(MainViewModel.class);
-
 
         stampsFavouriteLD = viewModel.getFavouriteStampsLiveData();
         stampsFavouriteLD.observe(this, new Observer<List<FavouriteStamp>>() {
@@ -113,8 +101,6 @@ public class FavouriteActivity extends AppCompatActivity {
         adapter.setOnStampClickListener(new StampAdapter.OnStampClickListener() {
             @Override
             public void onStampClick(int position) {
-                // Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
-                //   int positionTheme = spinnerThemeSelect.getSelectedItemPosition();
                 Stamp stamp = adapter.getStamps().get(position);
                 Intent intent = new Intent(FavouriteActivity.this, DetailStampActivity.class);
                 intent.putExtra("id", stamp.getId());
@@ -127,8 +113,6 @@ public class FavouriteActivity extends AppCompatActivity {
                 startActivityForResult(intent, RESULT_FIRST_USER);
             }
         });
-
-
     }  //end of onCreate
 
 }

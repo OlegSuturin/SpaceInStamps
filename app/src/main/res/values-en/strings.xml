@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Russian stamps</string>
+    <string name="item_menu_favourite">Favourites</string>
+    <string name="item_menu_main">Main</string>
+    <string name="item_clear_the_list">Clear the list</string>
+    <string name="item_about">About</string>
+    <string name="item_exit">Exit</string>
+    <string name="item_cast">Cast</string>
+    <string name="item_share">Share</string>
+    <string name="label_year">Year</string>
+    <string name="label_name">Name of stamps</string>
+    <string name="label_quantity">Quantity</string>
+    <string name="label_country">Country:</string>
+    <string name="label_year2">Year:</string>
+    <string name="label_name2">Name:</string>
+    <string name="label_quantity2">Quantity:</string>
+    <string name="label_date_release">Release date:</string>
+    <string name="label_catalog_num">Catalog:</string>
+    <string name="label_price">Cost(RUB):</string>
+    <string name="label_specifications">Circulation (ths.):</string>
+    <string name="number_of_images">Number of images</string>
+    <string name="image_of_stamp">Image of a postage stamp</string>
+    <string name="icon_glass">Magnifying glass icon</string>
+    <string name="Logo">Logo</string>
+    <string name="sort_by_theme">By subject</string>
+    <string name="sort_by_year">By year</string>
+    <string name="find_by_name">By name</string>
+    <string name="hint_name_word">The name/word</string>
+    <string name="icon_search">Search icon</string>
+    <string name="icon_to_left">Icon to the left</string>
+    <string name="icon_to_right">Icon to the right</string>
+    <string name="icon_favourite">Favorites icon</string>
+    <string name="text_about">The app is a non-commercial product (it does not contain ads or paid services). Materials of the resource were used philately.ru.</string>
+    <string name="contact_author_of_app">Contact the author of the app.</string>
+    <string name="label_share_with">Share with:</string>
+    <string name="toast_find">Find:</string>
+    <string name="toast_find_one">Find: one</string>
+    <string name="toast_not_load">No data is downloaded</string>
+    <string name="toast_exit">To exit, press again</string>
+    <string name="title_favourite">Favourites</string>
+    <string name="toast_delete_from_favourite">Removed from favorites</string>
+    <string name="toast_add_in_favourite">Added to favorites</string>
+    <string name="toast_data_not_find">Information in the database was not found!</string>
+    <string name="toast_end_of_list">The end of the list</string>
+    <string name="toast_start_of_list">Start of the list</string>
+    <string name="catalog_itc">ITC:</string>
+    <string name="catalog_sk">SK:</string>
+    <string name="catalog_mich">Michael:</string>
+    <string name="from">from</string>
+    <string name="label_overview">Overview:</string>
+    <string-array name="themes_array_string">
+        <item>Space</item>
+        <item>Flora</item>
+        <item>Fauna</item>
+        <item>Sports</item>
+        <item>Olympiad</item>
+        <item>New year</item>
+        <item>Art</item>
+        <item>Architecture</item>
+        <item>History</item>
+        <item>War</item>
+        <item>The symbols of the order</item>
+        <item>Cars</item>
+        <item>Aviation</item>
+        <item>Ships, the fleet</item>
+    </string-array>
+    <string-array name="range_array_string">
+        <item>STAMPS OF RUSSIA AND THE USSR 1857-1960</item>
+        <item>STAMPS OF THE USSR 1961-1991</item>
+        <item>STAMPS OF THE RUSSIAN FEDERATION 1992-2021</item>
+    </string-array>
+</resources>

@@ -15,11 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -93,8 +93,6 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             intent.putExtra("page", page);
             setResult(RESULT_OK, intent);
         }
-
-
         super.onBackPressed();
     }
 
@@ -117,7 +115,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
         if (data == null) {
-            Toast.makeText(this, "данные не загружены", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_not_load), Toast.LENGTH_SHORT).show();
         }
         ArrayList<Stamp> stamps = NetworkUtils.parserTitlesStamp(data);
         if (stamps != null && !stamps.isEmpty()) {
@@ -190,8 +188,8 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_stamp);
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar!=null){
-            actionBar.setTitle("Детальная информация:");
+        if (actionBar != null) {
+            actionBar.hide();
         }
 
         List<Stamp> stamps = new ArrayList<>();
@@ -233,7 +231,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
             range = intent.getStringExtra("range");
             theme = intent.getStringExtra("theme");
 
-           // Toast.makeText(this, "FT: " + favouriteTag, Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "FT: " + favouriteTag, Toast.LENGTH_SHORT).show();
         } else {
             finish();               //  закрываем активность, если что то не так
         }
@@ -266,21 +264,17 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
                 @Override
                 public void onChanged(List<FavouriteStamp> fStamps) {
                     if (fStamps != null) {
-                        // stamps.clear();
-                        // stamps.addAll(fStamps);
                         recordsNum = fStamps.size();
                     }
                 }
             });
-            //  List<FavouriteStamp> favouriteStampList = favouriteStampsLD.getValue();
-            //  stamps.addAll(favouriteStampList);
 
         } else {
             stamp = viewModel.getStampByIdStamp(idStamp);
         }
 
         if (stamp == null) {
-            Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_data_not_find), Toast.LENGTH_SHORT).show();
             finish();               //  закрываем активность, если что то не так
         }
 
@@ -289,8 +283,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         }
 
         applyDetail();  //применить детальную информацию на экран
-
-        textViewNumRecord.setText("№ " + currentNum + " из " + recordsNum);
+        textViewNumRecord.setText("№ " + currentNum + " [" + recordsNum + "]");
 
         adapter.setOnImageClickListener(new ImagesAdapter.OnImageClickListener() {
             @Override
@@ -306,7 +299,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         setOnReachEndListener(new OnReachEndListener() {   //догрузка данных
             @Override
             public void onReachEnd() {
-               // Toast.makeText(DetailStampActivity.this, "Достижение конца списка " + page, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(DetailStampActivity.this, "Достижение конца списка " + page, Toast.LENGTH_SHORT).show();
                 if (!isLoading) {   //если процесс загрузки не идет
                     downLoadData();
                 }
@@ -353,11 +346,9 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
     public void downloadDetail() {
         //загрузка детальной информации
         String urlAsStringDetail = stamp.getDetailUrl();
-        //"http://www.philately.ru/cgi-bin/sql/search1.cgi?action=view_details&id=3863";
-        //stamp.getDetailUrl();
         String data = NetworkUtils.getDetailFromNetwork(urlAsStringDetail);
         if (data == null) {
-            Toast.makeText(this, "данные не загружены", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_data_not_find), Toast.LENGTH_SHORT).show();
             finish();               //  закрываем активность, если что то не так
         }
         Stamp stampDetail = NetworkUtils.parserDetailStamp(data, Integer.toString(stamp.getYear()), range);
@@ -371,13 +362,10 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         stamp.setCatalogNumberMich(stampDetail.getCatalogNumberMich());
 
         ArrayList<String> imagesUrlString = NetworkUtils.parseImagesUrl(data);
-
         for (int i = 0; i < imagesUrlString.size(); i++) {
             ImageUrl imageUrl = new ImageUrl(stamp.getIdStamp(), imagesUrlString.get(i));
-            // Log.i("!@#", imageUrl.getUrl());
             viewModel.insertImageUrl(imageUrl);
         }
-
         stamp.setFlag(true);  // установили flag - информация загружена вся
         viewModel.updateStamp(stamp);
     }
@@ -392,26 +380,25 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         textViewPriceInfo.setText(stamp.getPrice());
         textViewSpecificationsInfo.setText(stamp.getSpecifications());
         textViewOverviewInfo.setText(stamp.getOverview());
-       // String catalogNumbers = String.format("ИТЦ: %s СК: %s Михель: %s", stamp.getCatalogNumberITC(), stamp.getCatalogNumberSK(), stamp.getCatalogNumberMich());
-        StringBuilder catalogNumbers= new StringBuilder();
-        if (!stamp.getCatalogNumberITC().isEmpty()){
-            catalogNumbers.append("ИТЦ: ");
+
+        StringBuilder catalogNumbers = new StringBuilder();
+        if (!stamp.getCatalogNumberITC().isEmpty()) {
+            catalogNumbers.append(getString(R.string.catalog_itc));
             catalogNumbers.append(stamp.getCatalogNumberITC());
             catalogNumbers.append("; ");
         }
-        if (!stamp.getCatalogNumberSK().isEmpty()){
-            catalogNumbers.append("СК: ");
+        if (!stamp.getCatalogNumberSK().isEmpty()) {
+            catalogNumbers.append(getString(R.string.catalog_sk));
             catalogNumbers.append(stamp.getCatalogNumberSK());
             catalogNumbers.append("; ");
         }
-        if (!stamp.getCatalogNumberMich().isEmpty()){
-            catalogNumbers.append("Михель: ");
+        if (!stamp.getCatalogNumberMich().isEmpty()) {
+            catalogNumbers.append(getString(R.string.catalog_mich));
             catalogNumbers.append(stamp.getCatalogNumberMich());
             catalogNumbers.append("; ");
         }
 
         textViewCatalogNumbersInfo.setText(catalogNumbers.toString());
-
         List<ImageUrl> imagesUrl = new ArrayList<>();
         if (favouriteTag) {
             List<FavouriteImageURL> favouriteImagesUrl = viewModel.getFavouriteImagesUrlById(stamp.getIdStamp());
@@ -422,13 +409,11 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         int number = imagesUrl.size();
         if (number > 1) {
             textViewNumberOfPics.setTextColor(getResources().getColor(android.R.color.holo_red_light));
-        }else {
+        } else {
             textViewNumberOfPics.setTextColor(getResources().getColor(android.R.color.darker_gray));
         }
 
         textViewNumberOfPics.setText(" " + number);
-        //Log.i("!@#", imagesUrl.get(0).getUrl());
-
         recyclerViewImagesInfo.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewImagesInfo.setAdapter(adapter);
         adapter.setImagesUrl(imagesUrl);
@@ -440,29 +425,29 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         if (currentNum > 1) {
             id--;
             currentNum--;
-            imageViewLeft.setImageResource(R.drawable.left_on);
-           handler.postDelayed(runnableL, 350);
+//            imageViewLeft.setImageResource(R.drawable.left_on);
+//            handler.postDelayed(runnableL, 350);
         } else {
-            Toast.makeText(this, "Начало списка", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_start_of_list), Toast.LENGTH_SHORT).show();
             applyDetail();
             return;
         }
         if (favouriteTag) {
-            //stamp = viewModel.getFavouriteStampById(id);
             List<FavouriteStamp> stamps = favouriteStampsLD.getValue();
             stamp = stamps.get(currentNum - 1);
         } else {
             stamp = viewModel.getStampById(id);
         }
         if (stamp == null) {
-            Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_data_not_find), Toast.LENGTH_SHORT).show();
         } else {
             if (!stamp.isFlag()) {   //загрузка детальной информации из интернета
                 downloadDetail();
+                progressBarLoadingOnDetail.setVisibility(View.VISIBLE);
+                viewProgressBar(750);
             }
             applyDetail();  //применить детальную информацию на экран
-            textViewNumRecord.setText("№ " + currentNum + " из " + recordsNum);
-
+            textViewNumRecord.setText("№ " + currentNum + " [" + recordsNum + "]");
         }
     }
 
@@ -471,36 +456,36 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         if (onReachEndListener != null && currentNum == viewModel.getItemCountStamps() - 10 && recordsNum >= 100) {
             onReachEndListener.onReachEnd();
         }
-
         if (currentNum < recordsNum) {
             id++;
             currentNum++;
-            imageViewRight.setImageResource(R.drawable.right_on);
-            handler.postDelayed(runnableR, 350);
+//            imageViewRight.setImageResource(R.drawable.right_on);
+//            handler.postDelayed(runnableR, 350);
         } else {
-            Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_end_of_list), Toast.LENGTH_SHORT).show();
             applyDetail();
             return;
         }
         if (favouriteTag) {
-            // stamp = viewModel.getFavouriteStampById(id);
             List<FavouriteStamp> stamps = favouriteStampsLD.getValue();
             stamp = stamps.get(currentNum - 1);
-            //  Toast.makeText(this, ""+stamps.size(), Toast.LENGTH_SHORT).show();
-
         } else {
             stamp = viewModel.getStampById(id);
         }
         if (stamp == null) {
-            Toast.makeText(this, "Информация в БД не найдена!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_data_not_find), Toast.LENGTH_SHORT).show();
         } else {
             if (!stamp.isFlag()) {   //загрузка детальной информации из интернета
                 downloadDetail();
+                progressBarLoadingOnDetail.setVisibility(View.VISIBLE);
+                viewProgressBar(750);
             }
             applyDetail();  //применить детальную информацию на экран
-            textViewNumRecord.setText("№ " + currentNum + " из " + recordsNum);
+            textViewNumRecord.setText("№ " + currentNum + " [" + recordsNum + "]");
+
         }
     }
+
 
     public void setColorHeart() {
         favouriteStamp = viewModel.getFavouriteStampByIdStamp(stamp.getIdStamp());   //получение марки  по ID марки в таблице избранного
@@ -521,17 +506,29 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
                 // Log.i("!@#", imageUrl.getUrl());
                 viewModel.insertFavouriteImageUrl(favouriteImageURL);
             }
-
-            Toast.makeText(this, "Добавлено в избранное", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_add_in_favourite), Toast.LENGTH_SHORT).show();
         } else {   //Если существует в таблице, то удаляем его из избранного
             viewModel.deleteFavouriteStamp(favouriteStamp);
             //здесь нужно удалять так же все его ImageURL избранное !!!
             viewModel.deleteFavouriteImagesUrlById(favouriteStamp.getIdStamp());
 
-            Toast.makeText(this, "Удалено из избранного", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_delete_from_favourite), Toast.LENGTH_SHORT).show();
         }
         setColorHeart();
     }
 
+    void viewProgressBar(int msec) {
+        CountDownTimer countDownTimer = new CountDownTimer(msec, msec) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
+
+            @Override
+            public void onFinish() {
+                progressBarLoadingOnDetail.setVisibility(View.INVISIBLE);
+            }
+        };
+        countDownTimer.start();
+    }
 
 }

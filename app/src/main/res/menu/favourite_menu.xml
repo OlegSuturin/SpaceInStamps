@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:title="@string/item_menu_main" android:id="@+id/itemMain"/>
-    <item android:title="Очистить список" android:id="@+id/itemClear"/>
+    <item android:title="@string/item_clear_the_list" android:id="@+id/itemClear"/>
 </menu>

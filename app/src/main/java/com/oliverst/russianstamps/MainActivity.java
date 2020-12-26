@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case R.id.itemFavourite:
                 exitCount = 0;
                 Intent intentToFavourite = new Intent(this, FavouriteActivity.class);
-                //startActivity(intentToFavourite);
                 startActivityForResult(intentToFavourite, RESULT_FIRST_USER);
                 break;
             case R.id.itemExit:
@@ -127,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if (data != null && data.hasExtra("page")) {
             int page = data.getIntExtra("page", -1);
-           // Toast.makeText(this, "" + page, Toast.LENGTH_SHORT).show();
             pageG = page;
             List<Stamp> stamps = stampsFromLiveData.getValue();
             adapter.setStamps(stamps);
@@ -137,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onBackPressed() {
         if (exitCount < 1) {
-            Toast.makeText(this, "Для выхода нажмите еще раз", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,getResources().getString( R.string.toast_exit), Toast.LENGTH_SHORT).show();
             exitCount++;
             return;
         }
@@ -153,7 +151,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         constraintLayoutLogo = findViewById(R.id.constraintLayoutLogo);
         constraintLayoutMain = findViewById(R.id.constraintLayoutMain);
@@ -175,9 +172,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
        // onClickSortByTheme(textViewSortByTheme);    //сортировка по умолчанию - По теме
         editTextSearchKeyword.setSelected(false);       //Остановить EditText от получения фокуса при запуске Activity
-
-
-
 
         adapter = new StampAdapter();
         recyclerViewTitle.setLayoutManager(new LinearLayoutManager(this));
@@ -210,16 +204,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         themeVisible(true);
                         break;
                     default:
-
                 }
-
-               // Toast.makeText(MainActivity.this, range, Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         };
         spinnerRangeSelect.setOnItemSelectedListener(onItemSelectedRangeListener);
@@ -229,7 +218,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 methodOfSort = SORT_BY_THEME;
-                theme = (String) parent.getSelectedItem();
+                //theme = (String) parent.getSelectedItem();
+                theme = getResources().getStringArray(R.array.themes_array_code)[position];
+                //Toast.makeText(MainActivity.this, theme, Toast.LENGTH_SHORT).show();
                 pageG = 1;
                 recordsNumberG = 0;
                 if (!isLoading) {   //если процесс загрузки не идет
@@ -252,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     year = Integer.parseInt((String) parent.getSelectedItem());
                     pageG = 1;
                     recordsNumberG = 0;
-                    // Log.i("!@#", "y:" + year);
                     if (!isLoading) {   //если процесс загрузки не идет
                         downLoadData();
                     }
@@ -273,7 +263,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onStampClick(int position) {
                 exitCount = 0;
-                // Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
                 int positionTheme = spinnerThemeSelect.getSelectedItemPosition();
                 Stamp stamp = adapter.getStamps().get(position);
                 if (stamp != null) {
@@ -299,9 +288,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onReachEnd() {
                 exitCount = 0;
-                // Toast.makeText(MainActivity.this, "конец списка page =" + pageG, Toast.LENGTH_SHORT).show();
                 if (!isLoading) {   //если процесс загрузки не идет
-                    //  methodOfSort = SORT_BY_THEME;
                     switch (methodOfSort) {
                         case SORT_BY_THEME:
                             int position = spinnerThemeSelect.getSelectedItemPosition();
@@ -317,7 +304,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             downLoadData();
                             break;
                     }
-                    // Toast.makeText(MainActivity.this, "pageG: "+ pageG, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -328,8 +314,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 adapter.setStamps(stamps);
             }
         });
-        //methodOfSort = SORT_BY_THEME;
-
         viewLogo(3);
 
     }//end of onCreate
@@ -346,10 +330,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 break;
             case SORT_BY_KEYWORD:
                 url = NetworkUtils.buildURLByKeyword(keyword, pageG, range);
-                // Toast.makeText(this, url.toString(), Toast.LENGTH_SHORT).show();
                 break;
         }//end of case
-
         if (url != null) {
             bundle.putString("url", url.toString());
             loaderManager.restartLoader(LOADER_ID, bundle, this);   //запускаем загрузчик
@@ -375,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override   //в этом методе получаем данные по окончании работы загрузчика
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
         if (data == null) {
-            Toast.makeText(this, "данные не загружены", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString( R.string.toast_not_load), Toast.LENGTH_SHORT).show();
         }
         if (pageG == 1) {
             adapter.clearStamps();
@@ -383,10 +365,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             viewModel.deleteAllImageUrlTask();
             recordsNumberG = NetworkUtils.parserRecordsNumber(data);
             if (recordsNumberG < 0) {   //единичный результат
-                Toast.makeText(MainActivity.this, "Всего найдено: один", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_find_one), Toast.LENGTH_SHORT).show();
             } else {
                 if(searchCount != 0)  // в первый запуск
-                Toast.makeText(MainActivity.this, "Всего найдено: " + recordsNumberG, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,    getResources().getString(R.string.toast_find) + Integer.toString(recordsNumberG), Toast.LENGTH_SHORT).show();
             }
         }
         searchCount++;
@@ -403,7 +385,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             } else {
                 recordsNumberG = 0;
             }
-
         } else {
             stamps = NetworkUtils.parserTitlesStamp(data);
         }
@@ -411,14 +392,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (stamps != null && !stamps.isEmpty()) {
 
             for (Stamp stamp : stamps) {
-                //загрузка детальной информации
-//                String urlAsStringDetail = stamp.getDetailUrl();
-//                String line =  NetworkUtils.getDetailFromNetwork(urlAsStringDetail);
-//                Log.i("!@#", line);
-
                 viewModel.insertStamp(stamp);
             }
-            //adapter.addStamps(stamps);
             pageG++;
         }
         isLoading = false;  //загрузка закончилась
@@ -493,7 +468,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         viewModel.deleteAllStamps();
         viewModel.deleteAllImageUrlTask();
 
-
         textViewSortByKeyword.setTextColor(getResources().getColor(R.color.black));
         textViewSortByKeyword.setBackgroundColor(getResources().getColor(R.color.main_blue_light2));
         textViewSortByYear.setTextColor(getResources().getColor(R.color.white));
@@ -505,7 +479,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         spinnerYearSelect.setVisibility(View.INVISIBLE);
         editTextSearchKeyword.setVisibility(View.VISIBLE);
         imageViewSearchKeyword.setVisibility(View.VISIBLE);
-
     }
 
     public void onClickSearchKeyword(View view) {
@@ -539,7 +512,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         CountDownTimer countDownTimer = new CountDownTimer(sec*1000, sec*1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-
             }
             @Override
             public void onFinish() {

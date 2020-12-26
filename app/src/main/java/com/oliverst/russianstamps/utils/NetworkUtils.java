@@ -32,39 +32,8 @@ public class NetworkUtils {
     private static final String baseUrl = "http://www.philately.ru";
     private static final String searchBaseUrl = "http://www.philately.ru/cgi-bin/sql/search%s.cgi?&action=search&tag=%s&page=%s";
     private static final String searchBaseUrlByYear = "http://www.philately.ru/cgi-bin/sql/search%s.cgi?action=search&year=%s&page=%s";
-    //private static final String searchBaseUrlByKeyword = "http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=&cat_name=catalogue&lang=&keyword=%s&page=%s";
     private static final String searchBaseUrlByKeyword = "http://www.philately.ru/cgi-bin/sql/search%s.cgi?action=search&cat_name=catalogue&keyword=%s&page=%s";
     private static final String detailBaseUrl = "http://www.philately.ru/cgi-bin/sql/search%s.cgi?action=view_details&id=%s";
-
-    public static final int COSMOS = 0;         //Космос
-    public static final int FLORA = 1;          //Флора
-    public static final int FAUNA = 2;          //Фауна
-    public static final int SPORT = 3;          //Спорт
-    public static final int OLYMPIC = 4;        //Олимпиада
-    public static final int NEW_YEAR = 5;       //Новый год
-    public static final int ART = 6;            //Искусство
-    public static final int ARCHITECTURE = 7;   //Архитектура
-    public static final int HISTORY = 8;        //История
-    public static final int WAR = 9;            //Война
-    public static final int SYMBOLS = 10;        //Символы, ордена
-    public static final int AUTO = 11;           //Автомобили
-    public static final int AVIATION = 12;       //Авиация
-    public static final int BOATS = 13;           //Корабли, флот
-
-    public static final String THEME_COSMOS = "%CA%EE%F1%EC%EE%F1";
-    public static final String THEME_FLORA = "%D4%EB%EE%F0%E0";
-    public static final String THEME_FAUNA = "%F4%E0%F3%ED%E0";
-    public static final String THEME_SPORT = "%D1%EF%EE%F0%F2";
-    public static final String THEME_OLYMPIC = "%CE%EB%E8%EC%EF%E8%E0%E4%E0";
-    public static final String THEME_NEW_YEAR = "%CD%EE%E2%FB%E9%20%E3%EE%E4";
-    public static final String THEME_ART = "%C8%F1%EA%F3%F1%F1%F2%E2%EE";
-    public static final String THEME_ARCHITECTURE = "%C0%F0%F5%E8%F2%E5%EA%F2%F3%F0%E0";
-    public static final String THEME_HISTORY = "%C8%F1%F2%EE%F0%E8%FF";
-    public static final String THEME_WAR = "%C2%EE%E9%ED%E0";
-    public static final String THEME_SYMBOLS = "%D1%E8%EC%E2%EE%EB%E8%EA%E0";
-    public static final String THEME_AUTO = "%C0%E2%F2%EE";
-    public static final String THEME_AVIATION = "%C0%E2%E8%E0";
-    public static final String THEME_BOATS = "%CA%EE%F0%E0%E1%EB%E8";
 
 
 //МЕТОДЫ ПАРСЕРЫ СТРАНИЦЫ РЕЗУЛЬТАТА ПОИСКА
@@ -181,30 +150,25 @@ public class NetworkUtils {
     public static Stamp parserTitlesSingleStamp(String data, int idStamp, String range) {
 
         Stamp stamp = null;
-
         String detailUrl = String.format(detailBaseUrl, range, idStamp);
 
         String year = "";
         String quantity = "";
         String name = "";
 
-        Log.i("!@#", "single");
-
+       // Log.i("!@#", "single");
 
         String buf = "";
         String stringPatternBuf = "Страна:</FONT>(.*?)</tr></table><br></center></TD>";
-
-        //String stringPatternBuf = "Страна:</FONT>(.*?)</td></tr></table></td></tr></table><br></center></TD>";
 
         Pattern patternBuf = Pattern.compile(stringPatternBuf);
         Matcher matcherBuf = patternBuf.matcher(data);
         if (matcherBuf.find()) {
             buf = matcherBuf.group(0);
         }
-        Log.i("!@#", buf);
+       // Log.i("!@#", buf);
 
         if (buf != null) {
-
             String stringPatternY = "Год выпуска:</FONT>&nbsp;&nbsp;<Font face=\"Verdana, Arial, Helvetica\" Size=2 Color=#003399>(.*?)&nbsp;&nbsp;<Font";
             Pattern patternYear;
             Matcher matcherYear;
@@ -213,8 +177,7 @@ public class NetworkUtils {
             if (matcherYear.find()) {
                 year = matcherYear.group(1);
             }
-
-            Log.i("!@#", year);
+           // Log.i("!@#", year);
 
             String stringPatternQuantity = "Кол. марок:</FONT>&nbsp;&nbsp;<Font face=\"Verdana, Arial, Helvetica\" Size=2 Color=#003399>(.*?)</TD>";
             Pattern patternQuantity = Pattern.compile(stringPatternQuantity);
@@ -223,7 +186,7 @@ public class NetworkUtils {
             if (matcherQuantity.find()) {
                 quantity = matcherQuantity.group(1);
             }
-            Log.i("!@#", quantity);
+           // Log.i("!@#", quantity);
 
 
             String stringPatternName = "Название выпуска:</FONT>&nbsp;&nbsp;<Font face=\"Verdana, Arial, Helvetica\" Size=2 Color=#003399>(.*?)</TD></TR><TR><TD";
@@ -232,7 +195,7 @@ public class NetworkUtils {
             if (matcherName.find()) {
                 name = matcherName.group(1);
             }
-            Log.i("!@#", name);
+           // Log.i("!@#", name);
 
             int y = 0;
             if (!year.isEmpty()) {
@@ -344,7 +307,6 @@ public class NetworkUtils {
         }
         //Log.i("!@#", catalogNumberSK);
 
-
         return new Stamp(country, dateRelease, overview, specifications, price, catalogNumberITC, catalogNumberSK, catalogNumberMich);
     }
 
@@ -377,67 +339,14 @@ public class NetworkUtils {
         //String theme = "Космос";
         try {
             String encodeTheme = URLEncoder.encode(theme, "windows-1251");
-            urlString = String.format(searchBaseUrl, range, encodeTheme, page);
+           // urlString = String.format(searchBaseUrl, range, encodeTheme, page);
+            urlString = String.format(searchBaseUrl, range, theme, page);
             urlResult = new URL(urlString);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-
-
-//        switch (themeNumber) {
-//            case COSMOS:
-//                urlString = String.format(searchBaseUrl, range, THEME_COSMOS, page);
-//                break;
-//            case FLORA:
-//                urlString = String.format(searchBaseUrl, range, THEME_FLORA, page);
-//                break;
-//            case FAUNA:
-//                urlString = String.format(searchBaseUrl, range, THEME_FAUNA, page);
-//                break;
-//            case SPORT:
-//                urlString = String.format(searchBaseUrl, range, THEME_SPORT, page);
-//                break;
-//            case OLYMPIC:
-//                urlString = String.format(searchBaseUrl, range, THEME_OLYMPIC, page);
-//                break;
-//            case NEW_YEAR:
-//                urlString = String.format(searchBaseUrl, range, THEME_NEW_YEAR, page);
-//                break;
-//            case ART:
-//                urlString = String.format(searchBaseUrl, range, THEME_ART, page);
-//                break;
-//            case ARCHITECTURE:
-//                urlString = String.format(searchBaseUrl, range, THEME_ARCHITECTURE, page);
-//                break;
-//            case HISTORY:
-//                urlString = String.format(searchBaseUrl, range, THEME_HISTORY, page);
-//                break;
-//            case WAR:
-//                urlString = String.format(searchBaseUrl, range, THEME_WAR, page);
-//                break;
-//            case SYMBOLS:
-//                urlString = String.format(searchBaseUrl, range, THEME_SYMBOLS, page);
-//                break;
-//            case AUTO:
-//                urlString = String.format(searchBaseUrl, range, THEME_AUTO, page);
-//                break;
-//            case AVIATION:
-//                urlString = String.format(searchBaseUrl, range, THEME_AVIATION, page);
-//                break;
-//            case BOATS:
-//                urlString = String.format(searchBaseUrl, range, THEME_BOATS, page);
-//                break;
-//
-//            default:
-//                urlString = "";
-//        }
-//        try {
-//            urlResult = new URL(urlString);
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
 
         return urlResult;
     }
@@ -449,7 +358,6 @@ public class NetworkUtils {
         URL urlResult = null;
 
         urlString = String.format(searchBaseUrlByYear, range, year, page);
-        //urlString = String.format("http://www.philately.ru/cgi-bin/sql/search2.cgi?action=search&category2=&year=&number=&tag=&cat_name=&page=%s&lang=&keyword=", page);
         try {
             urlResult = new URL(urlString);
         } catch (MalformedURLException e) {

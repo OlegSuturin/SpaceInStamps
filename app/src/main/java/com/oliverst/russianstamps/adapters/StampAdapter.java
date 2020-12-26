@@ -76,7 +76,6 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHo
         if (onReachEndListener != null && position == stamps.size()-10 && stamps.size() >= 100){
                 onReachEndListener.onReachEnd();
         }
-
             Stamp stamp = stamps.get(position);
         holder.textViewNum.setText(Integer.toString(position+1) +":");
         holder.textViewReleaseYear.setText(Integer.toString(stamp.getYear()));
@@ -95,7 +94,6 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHo
         private TextView textViewNum;
         private TextView textViewReleaseYear;
         private TextView textViewName;
-       // private TextView textViewCatalogNumbers;
         private TextView textViewQuantity;
 
         public StampsViewHolder(@NonNull View itemView) {
@@ -103,7 +101,6 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampsViewHo
             textViewNum = itemView.findViewById(R.id.textViewNum);
             textViewReleaseYear = itemView.findViewById(R.id.textViewYear);
             textViewName = itemView.findViewById(R.id.textViewName);
-           // textViewCatalogNumbers = itemView.findViewById(R.id.textViewCatalogNumbers);
             textViewQuantity = itemView.findViewById(R.id.textViewQuantity);
 
             itemView.setOnClickListener(new View.OnClickListener() {
