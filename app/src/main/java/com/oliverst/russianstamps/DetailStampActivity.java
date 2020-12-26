@@ -283,7 +283,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
         }
 
         applyDetail();  //применить детальную информацию на экран
-        textViewNumRecord.setText("№ " + currentNum + " [" + recordsNum + "]");
+        textViewNumRecord.setText("№ " + currentNum + " [ " + recordsNum + " ]");
 
         adapter.setOnImageClickListener(new ImagesAdapter.OnImageClickListener() {
             @Override
@@ -447,7 +447,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
                 viewProgressBar(750);
             }
             applyDetail();  //применить детальную информацию на экран
-            textViewNumRecord.setText("№ " + currentNum + " [" + recordsNum + "]");
+            textViewNumRecord.setText("№ " + currentNum + " [ " + recordsNum + " ]");
         }
     }
 
@@ -481,7 +481,7 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
                 viewProgressBar(750);
             }
             applyDetail();  //применить детальную информацию на экран
-            textViewNumRecord.setText("№ " + currentNum + " [" + recordsNum + "]");
+            textViewNumRecord.setText("№ " + currentNum + " [ " + recordsNum + " ]");
 
         }
     }
