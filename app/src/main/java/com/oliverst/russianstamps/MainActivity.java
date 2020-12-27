@@ -220,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 methodOfSort = SORT_BY_THEME;
                 //theme = (String) parent.getSelectedItem();
                 theme = getResources().getStringArray(R.array.themes_array_code)[position];
-                //Toast.makeText(MainActivity.this, theme, Toast.LENGTH_SHORT).show();
                 pageG = 1;
                 recordsNumberG = 0;
                 if (!isLoading) {   //если процесс загрузки не идет

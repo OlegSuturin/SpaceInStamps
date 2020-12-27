@@ -10,7 +10,7 @@
     <string name="label_num" translatable="false">№</string>
     <string name="label_year">Год</string>
     <string name="label_name">Название выпуска</string>
-    <string name="label_quantity">Кол-во:</string>
+    <string name="label_quantity">Кол-во</string>
     <string name="label_country">Страна:</string>
     <string name="label_year2">Год:</string>
     <string name="label_name2">Название:</string>
