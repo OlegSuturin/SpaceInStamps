@@ -9,6 +9,7 @@ import androidx.mediarouter.app.MediaRouteButton;
 import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,6 +34,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.oliverst.russianstamps.utils.ScaledImageView;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,6 +45,11 @@ import java.util.List;
 
 public class ScaledImageActivity extends AppCompatActivity {
     private String url;
+    private String year;
+    private String name;
+
+    private String count;
+
     private ScaledImageView scaledImageView;
     private CastSession mCastSession;
     private SessionManager mSessionManager;
@@ -51,6 +58,42 @@ public class ScaledImageActivity extends AppCompatActivity {
     private MediaInfo mediaInfo;
     private RemoteMediaClient remoteMediaClient;
     private MediaRouteButton mMediaRouteButton;
+    private Target bitmapTarget;
+    private Bitmap bitmap;
+
+    private File sdImageMainDirectory;
+
+
+    @Override
+    public void onBackPressed() {
+
+        //удаляем временный файл
+        if (sdImageMainDirectory !=null) {
+            boolean deleted = sdImageMainDirectory.delete();
+        }
+
+        super.onBackPressed();
+    }
+    //------------------------------------------------------
+
+    private void loadImage() {
+        bitmapTarget = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bm, Picasso.LoadedFrom from) {
+                bitmap = bm;
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+    }
 
     private final SessionManagerListener mSessionManagerListener = new SessionManagerListenerImpl();
 
@@ -143,31 +186,55 @@ public class ScaledImageActivity extends AppCompatActivity {
 
             case R.id.itemToShare:         //поделиться изображением через соцсеть
                 boolean b = false;
-                scaledImageView.buildDrawingCache();
-                Bitmap bitmap = scaledImageView.getDrawingCache();
+                //сохраняем изображение с помощью пикассо в bitmap
+                bitmapTarget = new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bm, Picasso.LoadedFrom from) {
+                        bitmap = bm;
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                };
+                // scaledImageView.buildDrawingCache();     // стрый способ - из imageView
+                // bitmap = scaledImageView.getDrawingCache();
+                Picasso.get().load(url).placeholder(R.drawable.placeholder).into(bitmapTarget);
 
                 OutputStream fOut = null;
                 Uri outputFileUri;
+                String fileName = "";
+                fileName = year + "." + name + "." + count + ".jpg";
+                if(fileName.isEmpty()){
+                    fileName = "stamp.jpg";
+                }
 
-                File sdImageMainDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "stamp.jpg");
+                sdImageMainDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), fileName);
                 try {
 
                     fOut = new FileOutputStream(sdImageMainDirectory);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fOut);
                 try {
                     if (fOut != null) {
                         fOut.flush();
                         fOut.close();
                         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                        shareIntent.setType("image/jpeg");
+                        shareIntent.setType("image/*");
                         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
                         Uri uri = FileProvider.getUriForFile(this, "com.oliverst.russianstamps.fileprovider", sdImageMainDirectory);
-
                         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
+                        shareIntent.setType("text/plain");
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, year + "." + name + "." + count);
                         startActivity(Intent.createChooser(shareIntent, getString(R.string.label_share_with)));
                     }
                 } catch (IOException e) {
@@ -226,8 +293,11 @@ public class ScaledImageActivity extends AppCompatActivity {
         }
 
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("url")) {
+        if (intent != null && intent.hasExtra("url") && intent.hasExtra("year") && intent.hasExtra("name") && intent.hasExtra("count")) {
             url = intent.getStringExtra("url");
+            year = intent.getStringExtra("year");
+            name = intent.getStringExtra("name");
+            count = intent.getStringExtra("count");
         } else {
             finish();
         }
@@ -238,6 +308,8 @@ public class ScaledImageActivity extends AppCompatActivity {
         mCastSession = mSessionManager.getCurrentCastSession();
         if (mCastSession != null) {
             imageMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);    //определяем метаданные мультимедиа материала
+            imageMetadata.putString(MediaMetadata.KEY_TITLE, year + "." + name + "." + count + ".jpg");
+            imageMetadata.putString(MediaMetadata.KEY_SUBTITLE, year + "." + name + "." + count + ".jpg");
             mediaInfo = new MediaInfo.Builder(url)                      //определяем тип данных и создаем мультимедийный экземпляр
                     .setStreamType(MediaInfo.STREAM_TYPE_NONE)
                     .setContentType("image/*")

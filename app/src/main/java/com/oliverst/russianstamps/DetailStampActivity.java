@@ -291,8 +291,15 @@ public class DetailStampActivity extends AppCompatActivity implements LoaderMana
                 //Toast.makeText(DetailStampActivity.this, "" + position, Toast.LENGTH_SHORT).show();
                 Intent intentScaled = new Intent(DetailStampActivity.this, ScaledImageActivity.class);
                 String url = adapter.getImagesUrl().get(position).getUrl();
+                String year = Integer.toString(stamp.getYear());
+                String name = stamp.getName();
+                String count = (position + 1) + "(" + adapter.getImagesUrl().size() + ")";
                 intentScaled.putExtra("url", url);
+                intentScaled.putExtra("year", year);
+                intentScaled.putExtra("name", name);
+                intentScaled.putExtra("count", count);
                 startActivity(intentScaled);
+
             }
         });
 

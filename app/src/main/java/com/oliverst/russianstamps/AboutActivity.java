@@ -28,4 +28,16 @@ public class AboutActivity extends AppCompatActivity {
         intent.setData(Uri.parse("mailto:"));
         startActivity(intent);
     }
+
+    public void onClickToPayPal(View view) {
+        Uri address = Uri.parse("https://www.paypal.com/paypalme/OlegSuturin");
+        Intent intent = new Intent(Intent.ACTION_VIEW, address);
+        startActivity(intent);
+    }
+
+    public void onClickToYandexMoney(View view) {
+        Uri address = Uri.parse("https://yoomoney.ru/to/410011876295126");
+        Intent intent = new Intent(Intent.ACTION_VIEW, address);
+        startActivity(intent);
+    }
 }

@@ -139,9 +139,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             exitCount++;
             return;
         }
-        //удаляем временный файл
-        File sdImageMainDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "stamp.jpg");
-        boolean deleted = sdImageMainDirectory.delete();
 
         System.exit(0);
         super.onBackPressed();

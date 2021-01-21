@@ -50,6 +50,9 @@
     <string name="catalog_mich">Михель:</string>
     <string name="from">из</string>
     <string name="email" translatable="false">oliverst@yandex.ru</string>
+    <string name="about_donate">Поддержать автора:</string>
+    <string name="about_yandex_money">Яндекс кошелек 410011876295126</string>
+    <string name="about_paypal" translatable="false">PayPal</string>
     <string-array name="themes_array_string">
         <item>Космос</item>
         <item>Флора</item>
@@ -90,7 +93,7 @@
     <string-array name="range_array_string">
         <item>МАРКИ РОССИЯ И СССР 1857-1960</item>
         <item>МАРКИ СССР 1961-1991</item>
-        <item>МАРКИ РОССИЙСКАЯ ФЕДЕРАЦИЯ 1992-2021</item>
+        <item>МАРКИ РФ 1992-2021</item>
     </string-array>
 
 </resources>

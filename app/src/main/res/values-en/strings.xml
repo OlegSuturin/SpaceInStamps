@@ -68,6 +68,8 @@
     <string-array name="range_array_string">
         <item>STAMPS OF RUSSIA AND THE USSR 1857-1960</item>
         <item>STAMPS OF THE USSR 1961-1991</item>
-        <item>STAMPS OF THE RUSSIAN FEDERATION 1992-2021</item>
+        <item>STAMPS OF THE RUSSIA 1992-2021</item>
     </string-array>
+    <string name="about_donate">Donate to the developer:</string>
+    <string name="about_yandex_money">Yandex wallet 410011876295126</string>
 </resources>

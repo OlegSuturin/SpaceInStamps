@@ -221,7 +221,7 @@ public class NetworkUtils {
         if (matcherBuf.find()) {
             buf = matcherBuf.group(0);
         }
-        // Log.i("!@#", buf);
+       // Log.i("!@#", buf);
 
         String country = "";
         String stringPatternCountry = "Color=#003399>(.*?)</TD>";
@@ -289,13 +289,21 @@ public class NetworkUtils {
         }
         //Log.i("!@#", catalogNumberMich);
 
-
+                                 //ИТЦ:</font>1455</TD></TR></table>
         String stringPatternITC = "ИТЦ:</font>(.*?)&nbsp;&nbsp;<";
         Pattern patternNumberITC = Pattern.compile(stringPatternITC);
         Matcher matcherNumberITC = patternNumberITC.matcher(buf);
         if (matcherNumberITC.find()) {
             catalogNumberITC = matcherNumberITC.group(1);
+        }else {                                                 //если не найден - второй вариант паттерна
+            stringPatternITC = "ИТЦ:</font>(.*?)</TD></TR>";
+            patternNumberITC = Pattern.compile(stringPatternITC);
+            matcherNumberITC = patternNumberITC.matcher(buf);
+           if(matcherNumberITC.find()){
+                catalogNumberITC = matcherNumberITC.group(1);
+            }
         }
+
         //Log.i("!@#", catalogNumberITC);
 
 
