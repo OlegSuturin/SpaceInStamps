@@ -54,6 +54,7 @@
     <string name="about_yandex_money">Яндекс кошелек 410011876295126</string>
     <string name="about_paypal" translatable="false">PayPal</string>
     <string name="text_about_version">Русские марки. Версия 1.03</string>
+    <string name="action_bar_about">О приложении</string>
     <string-array name="themes_array_string">
         <item>Космос</item>
         <item>Флора</item>

@@ -288,7 +288,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     switch (methodOfSort) {
                         case SORT_BY_THEME:
                             int position = spinnerThemeSelect.getSelectedItemPosition();
-                            theme = (String) spinnerThemeSelect.getSelectedItem();
+                           // theme = (String) spinnerThemeSelect.getSelectedItem();
+                            theme = getResources().getStringArray(R.array.themes_array_code)[position];
                             downLoadData();
                             break;
                         case SORT_BY_YEAR:

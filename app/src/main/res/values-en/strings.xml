@@ -73,4 +73,5 @@
     <string name="about_donate">Donate to the developer:</string>
     <string name="about_yandex_money">Yandex wallet 410011876295126</string>
     <string name="text_about_version">Russian stamps. Version 1.03</string>
+    <string name="action_bar_about">About</string>
 </resources>
